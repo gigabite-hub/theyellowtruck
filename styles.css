@@ -1,0 +1,26 @@
+/*
+Theme Name: The Yellow Truck
+Theme URI: https://themes.muffingroup.com/betheme
+Author: Muffin group
+Author URI: https://muffingroup.com
+Description: Child Theme for Betheme
+Template: betheme
+Version: 2.0.1
+*/
+
+.star-rating {
+    display: inline-block;
+    font-size: 20px;
+}
+
+.star {
+    display: inline-block;
+    width: 20px; 
+    height: 20px; 
+    background-color: #ddd; 
+    margin-right: 2px;
+}
+
+.star.filled {
+    background-color: #f8d100;
+}
