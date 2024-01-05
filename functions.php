@@ -294,6 +294,7 @@ function display_reviews() {
             echo '<p><strong>Email:</strong> ' . esc_html($email) . '</p>';
             echo '</div>';
         }
+        
         echo '</div>';
 
         echo '<script>
@@ -329,7 +330,10 @@ function display_leaderboard() {
 
     if ($query->have_posts()) {
         echo '<table class="leaderboard">';
-        echo '<thead><tr><th>Name</th><th>Rating</th><th>Stars</th></tr></thead><tbody>';
+        echo '<thead><tr><th>Name</th><th>Rating</th><th>Total Count</th><th>Stars</th></tr></thead><tbody>';
+
+        // Initialize the array to store aggregated ratings and counts
+        $aggregated_ratings = array();
 
         while ($query->have_posts()) {
             $query->the_post();
@@ -363,6 +367,7 @@ function display_leaderboard() {
             echo '<tr>';
             echo '<td>' . esc_html($post_title) . '</td>';
             echo '<td>' . esc_html($average_rating) . '</td>';
+            echo '<td>' . esc_html($count) . '</td>'; // New column for total count
             echo '<td>' . get_star_rating_html($average_rating) . '</td>';
             echo '</tr>';
         }
@@ -386,3 +391,44 @@ function get_star_rating_html($rating) {
 
     return $html;
 }
+
+function display_latest_reviews() {
+    ob_start();
+
+    $args = array(
+        'post_type'      => 'site-review',
+        'posts_per_page' => 10, // Display the latest 10 reviews
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    );
+    $query = new WP_Query($args);
+
+    if ($query->have_posts()) {
+        echo '<ul class="latest-reviews">';
+        while ($query->have_posts()) {
+            $query->the_post();
+
+            $custom_fields = get_post_meta(get_the_ID(), '_submitted', true);
+
+            if (isset($custom_fields['rating'])) {
+                $post_title = get_the_title();
+                $rating = esc_html($custom_fields['rating']);
+                $stars_html = get_star_rating_html($rating);
+				$description = wp_trim_words(get_the_excerpt(), 20);
+
+                echo '<li>';
+                echo '<strong>' . esc_html($post_title) . '</strong> - Rating: ' . $rating . ' Stars: ' . $stars_html;
+				echo '<p>' . esc_html($description) . '</p>';
+                echo '</li>';
+            }
+        }
+        echo '</ul>';
+    } else {
+        echo '<p>No reviews found.</p>';
+    }
+
+    wp_reset_postdata();
+
+    return ob_get_clean();
+}
+add_shortcode('latest_reviews', 'display_latest_reviews');
