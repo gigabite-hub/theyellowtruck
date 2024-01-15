@@ -242,89 +242,15 @@ function company_jobs_shortcode() {
 }
 add_shortcode('company_jobs', 'company_jobs_shortcode');
 
-function display_reviews() {
-    ob_start();
-
-    $args = array(
-        'post_type'      => 'site-review',
-        'posts_per_page' => -1, // Display all posts
-    );
-    $query = new WP_Query($args);
-
-    if ($query->have_posts()) {
-        echo '<div class="slick-slider">';
-        while ($query->have_posts()) {
-            $query->the_post();
-
-            $custom_fields = get_post_meta(get_the_ID(), '_submitted', true);
-
-            if (isset($custom_fields['assigned_posts']) && !empty($custom_fields['assigned_posts'])) {
-                $assigned_posts = explode(',', $custom_fields['assigned_posts']);
-
-                foreach ($assigned_posts as $assigned_post_id) {
-                    $assigned_post_id = trim($assigned_post_id);
-                    if (!isset($aggregated_ratings[$assigned_post_id])) {
-                        $aggregated_ratings[$assigned_post_id] = array(
-                            'total_rating' => 0,
-                            'count' => 0,
-                        );
-                    }
-
-                    $aggregated_ratings[$assigned_post_id]['total_rating'] += intval($custom_fields['rating']);
-                    $aggregated_ratings[$assigned_post_id]['count']++;
-                }
-            }
-        }
-
-        foreach ($aggregated_ratings as $post_id => $data) {
-            $post_title = get_the_title($post_id);
-            $total_rating = $data['total_rating'];
-            $count = $data['count'];
-            $average_rating = ($count > 0) ? round($total_rating / $count, 1) : 0;
-
-            // Additional data (inside the loop)
-            $content = $custom_fields['content'];
-            $email = $custom_fields['email'];
-
-            // Wrap each pair in a <div class="card">
-            echo '<div class="card">';
-            echo '<p><strong>' . esc_html($post_title) . ':</strong> ';
-            echo 'Total Rating: ' . esc_html($average_rating) . get_star_rating_html($average_rating) . '</p>';
-            echo '<p>' . esc_html($content) . '</p>';
-            echo '<p><strong>Email:</strong> ' . esc_html($email) . '</p>';
-            echo '</div>';
-        }
-        
-        echo '</div>';
-
-        echo '<script>
-            jQuery(document).ready(function($) {
-                $(".slick-slider").slick({
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    autoplay: true,
-                    autoplaySpeed: 4000,
-                    dots: false,
-                    arrows: false,
-                    variableWidth: false, 
-                });
-            });
-        </script>';
-    }
-
-    wp_reset_postdata();
-
-    return ob_get_clean();
-}
-add_shortcode('reviews', 'display_reviews');
-
 
 function display_leaderboard() {
     ob_start();
 
     $args = array(
         'post_type'      => 'site-review',
-        'posts_per_page' => -1, // Display all posts
+			 'posts_per_page' => 12,
+			'orderby'        => 'date',
+			'order'          => 'DESC',
     );
     $query = new WP_Query($args);
 
@@ -381,6 +307,72 @@ function display_leaderboard() {
 }
 add_shortcode('leaderboard', 'display_leaderboard');
 
+function display_leader() {
+    ob_start();
+
+		$args = array(
+			'post_type'      => 'site-review',
+			 'posts_per_page' => 12,
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+		);
+    $query = new WP_Query($args);
+
+    if ($query->have_posts()) {
+        echo '<table class="leader">';
+        echo '<thead></thead><tbody>';
+
+        // Initialize the array to store aggregated ratings and counts
+        $aggregated_ratings = array();
+        $counter = 1;
+        while ($query->have_posts()) {
+            $query->the_post();
+
+            $custom_fields = get_post_meta(get_the_ID(), '_submitted', true);
+
+            if (isset($custom_fields['assigned_posts']) && !empty($custom_fields['assigned_posts'])) {
+                $assigned_posts = explode(',', $custom_fields['assigned_posts']);
+
+                foreach ($assigned_posts as $assigned_post_id) {
+                    $assigned_post_id = trim($assigned_post_id);
+                    if (!isset($aggregated_ratings[$assigned_post_id])) {
+                        $aggregated_ratings[$assigned_post_id] = array(
+                            'total_rating' => 0,
+                            'count' => 0,
+                        );
+                    }
+
+                    $aggregated_ratings[$assigned_post_id]['total_rating'] += intval($custom_fields['rating']);
+                    $aggregated_ratings[$assigned_post_id]['count']++;
+                }
+            }
+        }
+
+        foreach ($aggregated_ratings as $post_id => $data) {
+            $post_title = get_the_title($post_id);
+            $total_rating = $data['total_rating'];
+            $count = $data['count'];
+            $average_rating = ($count > 0) ? round($total_rating / $count, 1) : 0;
+
+            echo '<tr>';
+            echo '<td>' . esc_html($counter) . '</td>'; // Add this line for the numbers column
+            echo '<td>' . esc_html($post_title) . '</td>';
+            echo '<td>' . get_star_rating_html($average_rating) . '</td>';
+            echo '<td>' . esc_html($average_rating) . '</td>';
+            echo '</tr>';
+
+            $counter++;
+        }
+
+        echo '</tbody></table>';
+    }
+
+    wp_reset_postdata();
+
+    return ob_get_clean();
+}
+add_shortcode('leader', 'display_leader');
+
 function get_star_rating_html($rating) {
     $html = '<div class="star-rating">';
     $rounded_rating = round($rating);
@@ -404,7 +396,7 @@ function display_latest_reviews() {
     $query = new WP_Query($args);
 
     if ($query->have_posts()) {
-        echo '<ul class="latest-reviews">';
+        echo '<div class="slick-slider">';
         while ($query->have_posts()) {
             $query->the_post();
 
@@ -416,13 +408,29 @@ function display_latest_reviews() {
                 $stars_html = get_star_rating_html($rating);
 				$description = wp_trim_words(get_the_excerpt(), 20);
 
-                echo '<li>';
-                echo '<strong>' . esc_html($post_title) . '</strong> - Rating: ' . $rating . ' Stars: ' . $stars_html;
+                echo '<div class="card">';
+                echo '<strong>' . esc_html($post_title) . '</strong>';
+                echo  $stars_html;
 				echo '<p>' . esc_html($description) . '</p>';
-                echo '</li>';
+                echo '</div>';
             }
         }
-        echo '</ul>';
+        echo '</div>';
+
+        echo '<script>
+        jQuery(document).ready(function($) {
+            $(".slick-slider").slick({
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 4000,
+                dots: false,
+                arrows: false,
+                variableWidth: false, 
+            });
+        });
+    </script>';
+
     } else {
         echo '<p>No reviews found.</p>';
     }
