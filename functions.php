@@ -440,3 +440,125 @@ function display_latest_reviews() {
     return ob_get_clean();
 }
 add_shortcode('latest_reviews', 'display_latest_reviews');
+
+
+// Function to handle form submission and save data
+function process_company_profile_form() {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_company_profile'])) {
+        $company_name = sanitize_text_field($_POST['company_name']);
+
+        $new_post = array(
+            'post_title'   => $company_name,
+            'post_type'    => 'company-profile',
+            'post_status'  => 'draft',
+        );
+
+        $post_id = wp_insert_post($new_post);
+
+        update_post_meta($post_id, 'company_name', sanitize_text_field($_POST['company_name']));
+        update_post_meta($post_id, 'company_description', sanitize_text_field($_POST['company_description']));
+        update_post_meta($post_id, 'company_location', sanitize_text_field($_POST['company_location']));
+        update_post_meta($post_id, 'company_website', esc_url($_POST['company_website']));
+        update_post_meta($post_id, 'reviews', sanitize_text_field($_POST['reviews']));
+        update_post_meta($post_id, 'company_employees', sanitize_text_field($_POST['company_employees']));
+		wp_update_post(array('ID' => $post_id, 'post_content' => wp_kses_post($_POST['post_type_description'])));
+
+		if (!empty($_FILES['featured_image']['tmp_name'])) {
+            $upload_dir = wp_upload_dir();
+            $file_name = $_FILES['featured_image']['name'];
+            $file_tmp = $_FILES['featured_image']['tmp_name'];
+            $upload_path = $upload_dir['path'] . '/' . $file_name;
+
+            move_uploaded_file($file_tmp, $upload_path);
+
+            $attachment = array(
+                'post_mime_type' => $_FILES['featured_image']['type'],
+                'post_title'     => $company_name,
+                'post_content'   => '',
+                'post_status'    => 'inherit',
+            );
+
+            $attachment_id = wp_insert_attachment($attachment, $upload_path, $post_id);
+
+            set_post_thumbnail($post_id, $attachment_id);
+        }
+
+        if (isset($_POST['company_jobs']) && is_array($_POST['company_jobs'])) {
+            $company_jobs = array_map('intval', $_POST['company_jobs']);
+            update_post_meta($post_id, 'company_jobs', $company_jobs);
+        }
+
+    }
+}
+
+// Shortcode to display the company profile form
+function company_profile_form_shortcode() {
+    ob_start();
+
+    process_company_profile_form();
+
+    $job_args = array(
+        'post_type' => 'my-job',
+        'posts_per_page' => -1,
+    );
+    $job_posts = get_posts($job_args);
+
+
+    ?>
+    <form action="" method="post" enctype="multipart/form-data">
+        <label for="company_name">Company Name:</label>
+        <input type="text" name="company_name" required>
+
+        <label for="company_description">Company Description:</label>
+        <textarea name="company_description"></textarea>
+
+        <label for="company_location">Company Location:</label>
+        <input type="text" name="company_location">
+
+        <label for="company_website">Company Website:</label>
+        <input type="url" name="company_website">
+
+        <label for="featured_image">Featured Image:</label>
+        <input type="file" name="featured_image">
+
+        <label for="reviews">Reviews:</label>
+		<input type="number" name="reviews">
+
+        <label for="company_jobs">Company Jobs:</label>
+        <select name="company_jobs[]" multiple>
+            <?php
+            foreach ($job_posts as $job_post) {
+                echo '<option value="' . esc_attr($job_post->ID) . '">' . esc_html($job_post->post_title) . '</option>';
+            }
+            ?>
+        </select>
+
+		<label for="company_employees">Company Employees:</label>
+        <input type="text" name="company_employees">
+
+        <label for="post_type_description">Post Type Description:</label>
+        <textarea name="post_type_description"></textarea>
+
+        <input type="submit" name="submit_company_profile" value="Submit">
+    </form>
+    <?php
+
+    return ob_get_clean();
+}
+add_shortcode('company_profile_form', 'company_profile_form_shortcode');
+
+function add_draft_count_to_menu() {
+    $draft_count = wp_count_posts('company-profile')->draft; ?>
+	<script>
+	 jQuery(document).ready(function($) {
+	  var menuName = $('#menu-posts-company-profile .wp-menu-name');
+
+	  menuName.html('<span>'<?php echo $draft_count; ?>'</span>' + menuName.html());
+	});
+	</script>		
+
+	<?php
+	var_dump($draft_count);
+}
+
+add_action('admin_menu', 'add_draft_count_to_menu');
