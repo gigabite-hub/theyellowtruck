@@ -18,23 +18,12 @@ function mfn_load_child_theme_textdomain(){
 	load_child_theme_textdomain('mfn-opts', get_stylesheet_directory() . '/languages');
 }
 
-/**
- * Enqueue Styles
- */
-
 function mfnch_enqueue_styles()
 {
-	// enqueue the parent stylesheet
-	// however we do not need this if it is empty
-	// wp_enqueue_style('parent-style', get_template_directory_uri() .'/style.css');
-
-	// enqueue the parent RTL stylesheet
 
 	if ( is_rtl() ) {
 		wp_enqueue_style('mfn-rtl', get_template_directory_uri() . '/rtl.css');
 	}
-
-	// enqueue the child stylesheet
 
 	wp_dequeue_style('style');
 	wp_enqueue_style('style', get_stylesheet_directory_uri() .'/style.css');
@@ -42,20 +31,13 @@ function mfnch_enqueue_styles()
 add_action('wp_enqueue_scripts', 'mfnch_enqueue_styles', 101);
 
 function enqueue_slick_scripts() {
-    // Enqueue jQuery from CDN
     wp_enqueue_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js', array(), null, true);
-
-    // Enqueue Slick Carousel script and styles in the footer
     wp_enqueue_script('slick-script', 'https://unpkg.com/slick-carousel@1.8.1/slick/slick.min.js', array('jquery'), null, true);
     wp_enqueue_style('slick-style', 'https://unpkg.com/slick-carousel@1.8.1/slick/slick.css');
     wp_enqueue_style('slick-theme-style', 'https://unpkg.com/slick-carousel@1.8.1/slick/slick-theme.css');
 }
 
 add_action('wp_enqueue_scripts', 'enqueue_slick_scripts');
-
-
-
-
 
 add_shortcode('all_jobs', '_all_jobs_');
 function _all_jobs_() {
@@ -94,7 +76,7 @@ function _all_jobs_() {
     </div>
 
     <!-- Container for AJAX-loaded job posts -->
-    <div id="job-posts-container">
+    <div id="job-posts-container" class="job-container">
         <?php
         $args = array(
             'post_type' => 'my-job',
@@ -112,16 +94,49 @@ function _all_jobs_() {
                 $post_image = get_the_post_thumbnail_url($post_id, 'full');
                 $post_excerpt = get_the_excerpt();
                 ?>
-                <a href="<?php echo $post_url; ?>" class="job-card">
+                <div class="jobs-list">
+               <div class="job-card" data-post-id="<?php echo esc_attr($post_id); ?>">
                     <div class="left-col">
                         <img src="<?php echo $post_image; ?>" alt="<?php echo $post_title; ?>">
                         <h4><?php echo $post_title; ?></h4>
                     </div>
                     <div class="info">
-                        <p><?php the_field('job_category'); ?></p>
-                        <p><?php the_field('job_location'); ?></p>
-                    </div>
-                </a>
+					<p><?php the_field('job_category'); ?></p>
+					<p><?php the_field('job_location'); ?></p>
+				</div>
+                </div>
+            </div>
+                <?php
+            }
+        } else {
+            echo 'No jobs found.';
+        }
+
+
+        if ($query->have_posts()) {
+            while ($query->have_posts()) {
+                $query->the_post();
+                $post_id = get_the_ID();
+                $post_title = get_the_title();
+                $post_url = get_permalink();
+                $post_image = get_the_post_thumbnail_url($post_id, 'full');
+                $post_excerpt = get_the_excerpt();
+                ?>
+            <div class="jobs-detail">
+					<!-- Popup -->
+					<div id="popup-<?php echo $post_id; ?>" class="popup">
+					<div class="popup-cotent">
+						<div class="job-img">
+							<img src="<?php echo $post_image; ?>" alt="<?php echo $post_title; ?>">
+						</div>
+						<div class="job-content">
+							<h2><?php echo $post_title; ?></h2>
+							<p><?php echo $post_excerpt; ?></p>
+						</div>
+						<a href="javascript:void(0)" class="close-popup">Close</a>
+					</div>
+				</div>
+            </div>
                 <?php
             }
         } else {
@@ -132,7 +147,33 @@ function _all_jobs_() {
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+		document.addEventListener('DOMContentLoaded', function () {
+			var popups = document.querySelectorAll('.popup');
+			var jobCards = document.querySelectorAll('.job-card');
+			var closePopups = document.querySelectorAll('.close-popup');
+
+			popups.forEach(function (popup) {
+				popup.style.display = 'none';
+			});
+
+			jobCards.forEach(function (jobCard) {
+				jobCard.addEventListener('click', function () {
+					var postId = jobCard.getAttribute('data-post-id');
+					var popup = document.getElementById('popup-' + postId);
+
+					popup.style.display = 'block';
+					popup.classList.add("active");
+				});
+			});
+
+			closePopups.forEach(function (closePopup) {
+				closePopup.addEventListener('click', function () {
+					var popup = closePopup.closest('.popup');
+
+					popup.style.display = 'none';
+					popup.classList.remove('active');
+				});
+
             const jobCategorySelect = document.getElementById('job-category');
             const jobPostsContainer = document.getElementById('job-posts-container');
 
@@ -158,6 +199,7 @@ function _all_jobs_() {
             // Initial load
             filterJobs('');
         });
+    });
     </script>
 
     <?php
@@ -199,7 +241,7 @@ function filter_jobs_callback() {
             $post_image = get_the_post_thumbnail_url($post_id, 'full');
             $post_excerpt = get_the_excerpt();
             ?>
-            <a href="<?php echo $post_url; ?>" class="job-card">
+             <div class="job-card" data-post-id="<?php echo esc_attr($post_id); ?>">
                 <div class="left-col">
                     <img src="<?php echo $post_image; ?>" alt="<?php echo $post_title; ?>">
                     <h4><?php echo $post_title; ?></h4>
@@ -208,13 +250,26 @@ function filter_jobs_callback() {
                     <p><?php the_field('job_category'); ?></p>
                     <p><?php the_field('job_location'); ?></p>
                 </div>
-            </a>
+        </div>
+				<!-- Popup -->
+					<div id="popup-<?php echo $post_id; ?>" class="popup">
+					<div class="popup-cotent">
+						<div class="job-img">
+							<img src="<?php echo $post_image; ?>" alt="<?php echo $post_title; ?>">
+						</div>
+						<div class="job-content">
+							<h2><?php echo $post_title; ?></h2>
+							<p><?php echo $post_excerpt; ?></p> <!-- Change to get_the_content() -->
+						</div>
+						<a href="javascript:void(0)" class="close-popup">Close</a>
+					</div>
+				</div>
             <?php
         }
     } else {
         echo 'No jobs found.';
     }
-
+	
     wp_reset_postdata();
     wp_die();
 }
@@ -505,25 +560,33 @@ function company_profile_form_shortcode() {
 
 
     ?>
-    <form action="" method="post" enctype="multipart/form-data">
-        <label for="company_name">Company Name:</label>
+    <form action="" method="post" enctype="multipart/form-data" class="company_form">
+<div class="c_row">
+        <div>
+        <label for="company_name">Company Name <span class="req-label">*</span></label>
         <input type="text" name="company_name" required>
-
-        <label for="company_description">Company Description:</label>
+</div>
+<div>
+        <label for="company_location">Company Location <span class="req-label">*</span></label>
+        <input type="text" name="company_location" required>
+        </div>
+<div>
+        <label for="company_website">Company Website <span class="req-label">*</span></label>
+        <input type="url" name="company_website" required>
+        </div>
+<div>
+        <label for="featured_image">Company Logo <span class="req-label">*</span> (Preferred Size 200*100)</label>
+        <input type="file" name="featured_image" required>
+        </div>
+<div>
+		<label for="company_employees">Company Employees <span class="req-label">*</span></label>
+        <input type="text" name="company_employees" required>
+        </div>
+        <div>
+        <label for="company_description">Company Description (Optional)</label>
         <textarea name="company_description"></textarea>
-
-        <label for="company_location">Company Location:</label>
-        <input type="text" name="company_location">
-
-        <label for="company_website">Company Website:</label>
-        <input type="url" name="company_website">
-
-        <label for="featured_image">Featured Image:</label>
-        <input type="file" name="featured_image">
-
-        <label for="reviews">Reviews:</label>
-		<input type="number" name="reviews">
-
+        </div>
+<!--         <div>
         <label for="company_jobs">Company Jobs:</label>
         <select name="company_jobs[]" multiple>
             <?php
@@ -532,14 +595,12 @@ function company_profile_form_shortcode() {
             }
             ?>
         </select>
-
-		<label for="company_employees">Company Employees:</label>
-        <input type="text" name="company_employees">
-
-        <label for="post_type_description">Post Type Description:</label>
-        <textarea name="post_type_description"></textarea>
-
+        </div> -->
+        </div>
+<div class="c_submit">
         <input type="submit" name="submit_company_profile" value="Submit">
+        </div>
+
     </form>
     <?php
 
@@ -549,16 +610,22 @@ add_shortcode('company_profile_form', 'company_profile_form_shortcode');
 
 function add_draft_count_to_menu() {
     $draft_count = wp_count_posts('company-profile')->draft; ?>
-	<script>
-	 jQuery(document).ready(function($) {
-	  var menuName = $('#menu-posts-company-profile .wp-menu-name');
 
-	  menuName.html('<span>'<?php echo $draft_count; ?>'</span>' + menuName.html());
-	});
-	</script>		
+    <!-- Enqueue jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-	<?php
-	var_dump($draft_count);
+    <script>
+        jQuery(document).ready(function($) {
+            var menuName = $('#menu-posts-company-profile .wp-menu-name');
+
+            menuName.append('<span class="update-plugins"><?php echo $draft_count; ?></span>');
+
+            console.log("test");
+        });
+    </script>
+
+    <?php
+    var_dump($draft_count);
 }
 
 add_action('admin_menu', 'add_draft_count_to_menu');
