@@ -626,7 +626,55 @@ function add_draft_count_to_menu() {
     </script>
 
     <?php
-    var_dump($draft_count);
 }
 
 add_action('admin_menu', 'add_draft_count_to_menu');
+
+function jobs_listing() { 
+    ob_start();
+
+    $job_args = array(
+        'post_type'      => 'my-job',
+        'posts_per_page' => -1,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    );
+    $job_posts = get_posts($job_args);
+
+    echo '<div class="tabs">';
+    foreach ($job_posts as $index => $job_post) {
+        $tab_class = ($index === 0) ? 'tab active' : 'tab';
+
+        echo '<a href="#" class="' . esc_attr($tab_class) . '" data-toggle-target=".tab-content-' . ($index + 1) . '">' . esc_html(get_the_title($job_post->ID)) . '</a>';
+        
+        $job_category = get_field('job_category', $job_post->ID);
+        $job_location = get_field('job_location', $job_post->ID);
+
+        echo '<p>Job Category: ' . esc_html($job_category) . '</p>';
+        echo '<p>Job Location: ' . esc_html($job_location) . '</p>';
+    }
+    echo '</div><div class="job-content">';
+
+    foreach ($job_posts as $index => $job_post) {
+        $content_class = ($index === 0) ? 'tab-content tab-content-' . ($index + 1) . ' active' : 'tab-content tab-content-' . ($index + 1);
+        echo '<div class="' . esc_attr($content_class) . '">';
+        echo '<h2>' . esc_html(get_the_title($job_post->ID)) . '</h2>';
+
+        $thumbnail_url = get_the_post_thumbnail_url($job_post->ID, 'thumbnail');
+        if ($thumbnail_url) {
+            echo '<img src="' . esc_url($thumbnail_url) . '" alt="' . esc_attr(get_the_title($job_post->ID)) . '">';
+        }
+
+        $job_category = get_field('job_category', $job_post->ID);
+        $job_location = get_field('job_location', $job_post->ID);
+
+        echo '<p>Job Category: ' . esc_html($job_category) . '</p>';
+        echo '<p>Job Location: ' . esc_html($job_location) . '</p>';
+
+        echo '</div></div>';
+    }
+
+    return ob_get_clean();
+}
+
+add_shortcode('jobs-listing', 'jobs_listing');
