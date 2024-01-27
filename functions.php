@@ -736,3 +736,14 @@ function custom_search_form() {
 }
 
 add_shortcode('custom_search', 'custom_search_form');
+
+
+function modify_search_query($query) {
+    if ($query->is_search && !is_admin()) {
+        $query->set('post_type', 'company-profile');
+    }
+}
+
+add_action('pre_get_posts', 'modify_search_query');
+
+
