@@ -15,11 +15,9 @@ get_header();
             <div class="inner-wrapper">
 
                 <?php
-                // Modify the main search query to include only the 'company-profile' post type
                 global $wp_query;
                 $wp_query->set('post_type', 'company-profile');
 
-                // Check if there are search results
                 if (have_posts()) :
 
                     while (have_posts()) : the_post();
@@ -65,7 +63,6 @@ get_header();
                     <p><?php _e('No results found. Try a different search term.', 'textdomain'); ?></p>
 
                 <?php endif;
-                // Restore the global $post variable
                 wp_reset_postdata(); ?>
             </div>
         </div>

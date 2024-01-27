@@ -709,7 +709,7 @@ function jobs_listing() {
 
         $post_content = get_post_field('job_description', $job_post->ID);
       
-        echo wpautop($post_content); // Apply paragraph tags and other formatting
+        echo wpautop($post_content);
 
         echo '<a href="#applyjobform" class="apply-btn"> Apply Now </a>';
 
