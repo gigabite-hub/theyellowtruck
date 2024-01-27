@@ -3,12 +3,25 @@
     $(document).ready(function () {
         console.log('hello');
 
-        $('.tab').on('click', function (evt) {
-            evt.preventDefault();
+        $('.tab').on('click', function (event) {
+            event.preventDefault();
+            $('.tab').removeClass('active');
             $(this).toggleClass('active');
-            var sel = this.getAttribute('data-toggle-target');
-            $('.tab-content').removeClass('active').filter(sel).addClass('active');
+            var selected = this.getAttribute('data-toggle-target');
+            $('.tab-content').removeClass('active').filter(selected).addClass('active');
+
+            var getCompanyEmail = $('.active input#email-hidden').val();
+            console.log("🚀 ~ getCompanyEmail:", getCompanyEmail);
+            var jobTitle = $('.active input#Job-title').val();
+            console.log("🚀 ~ jobTitle:", jobTitle);
+            var jobData = $('.active .click-content').data('job');
+            console.log("🚀 ~ jobData:", jobData);
+
+            $('#application-form #nf-form-1-cont #nf-field-10').val(getCompanyEmail);
+            $('#application-form #nf-form-1-cont #nf-field-11').val(jobData);
+
         });
+        // {system:admin_email},
 
         var jobWrapper = $("#job-wrapper");
 
