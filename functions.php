@@ -641,7 +641,7 @@ function jobs_listing() {
     );
     $job_posts = get_posts($job_args);
 
-    echo '<div class="job-wrapper">';
+    echo '<div class="job-wrapper" id="job-wrapper">';
     echo '<div class="tabs">';
 
     foreach ($job_posts as $index => $job_post) {
@@ -653,7 +653,7 @@ function jobs_listing() {
         echo '<p>Category: ' . esc_html($job_category) . '</p>';
         echo '<p>Location: ' . esc_html($job_location) . '</p>';
         echo '</a>';
-            }
+    }
 
     echo '</div>';
     echo '<div class="job-content">';
