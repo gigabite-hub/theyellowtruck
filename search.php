@@ -7,20 +7,19 @@ get_header();
 
         <div class="page-conatiner">
             <header class="page-header">
-                <h1 class="page-title"><?php printf(__('Search Results for: %s', 'theyellowtruck'), get_search_query()); ?></h1>
+                <h1 class="page-title"><?php printf(__('Search Results for: %s', 'theyellowtruck'), get_search_query()); ?>    </h1>
             </header>
         </div>
 
         <div class="loop-wrapper">
-            <div class="inner-wrapper">
 
                 <?php
                 global $wp_query;
                 // $wp_query->set('post_type', 'company-profile');
 
                 if (have_posts()) :
-                    echo '<p>Total Results: ' . $wp_query->found_posts . '</p>';
-
+                    echo '<p>Total Result: ' . $wp_query->found_posts . '</p>';
+                echo '<div class="inner-wrapper">'
                     while (have_posts()) : the_post();
                 ?>
                         <div class="cp-card">
