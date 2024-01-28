@@ -16,9 +16,10 @@ get_header();
 
                 <?php
                 global $wp_query;
-                $wp_query->set('post_type', 'company-profile');
+                // $wp_query->set('post_type', 'company-profile');
 
                 if (have_posts()) :
+                    echo '<p>Total Results: ' . $wp_query->found_posts . '</p>';
 
                     while (have_posts()) : the_post();
                 ?>

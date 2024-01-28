@@ -16,12 +16,14 @@
             console.log("🚀 ~ jobTitle:", jobTitle);
             var jobData = $('.active .click-content').data('job');
             console.log("🚀 ~ jobData:", jobData);
+            var getCompanyName = $('.active .click-content').data('company');
+            console.log("🚀 ~ getCompanyName:", getCompanyName);
 
             $('#application-form #nf-form-1-cont #nf-field-10').val(getCompanyEmail);
             $('#application-form #nf-form-1-cont #nf-field-11').val(jobData);
+            $('#companytitle h3').append(getCompanyName);
 
         });
-        // {system:admin_email},
 
         var searchQuery = getParameterByName('s');
         $('.page-title').append(searchQuery);

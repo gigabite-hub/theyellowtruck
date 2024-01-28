@@ -668,7 +668,7 @@ function jobs_listing() {
             endforeach;
             wp_reset_postdata();
         endif;
-        echo '<div class="click-content" data-job="' . esc_html($company_name) . ', ' . esc_html($job_category) . ', ' . esc_html($job_location) . ', ' . esc_html($employment_type) . ', ' . esc_html($compensation) . ', ' . esc_html($job_type) . '"></div>';        
+        echo '<div class="click-content" data-company="'.esc_html($company_name).'" data-job="' . esc_html($company_name) . ', ' . esc_html($job_category) . ', ' . esc_html($job_location) . ', ' . esc_html($employment_type) . ', ' . esc_html($compensation) . ', ' . esc_html($job_type) . '"></div>';        
         echo '</a>';
     }
 
