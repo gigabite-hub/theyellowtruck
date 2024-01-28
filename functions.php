@@ -633,17 +633,21 @@ add_action('admin_menu', 'add_draft_count_to_menu');
 function jobs_listing() {
     ob_start();
 
+    $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+    
     $job_args = array(
         'post_type'      => 'my-job',
-        'posts_per_page' => -1,
+        'posts_per_page' => 8,
         'orderby'        => 'date',
         'order'          => 'DESC',
+        'paged'          => $paged,
     );
-    $job_posts = get_posts($job_args);
-
+    $job_query = new WP_Query($job_args);
+    $job_posts = $job_query->posts;
+    
     echo '<div class="job-wrapper" id="job-wrapper">';
     echo '<div class="tabs">';
-
+    
     foreach ($job_posts as $index => $job_post) {
         $tab_class = ($index === 0) ? 'tab active' : 'tab';
         echo '<a href="#" class="job-card ' . esc_attr($tab_class) . '" data-toggle-target=".tab-content-' . ($index + 1) . '"><b>' . esc_html(get_the_title($job_post->ID)) . '</b>';
@@ -654,7 +658,7 @@ function jobs_listing() {
         $employment_type = get_field('employment_type', $job_post->ID);
         $compensation = get_field('compensation', $job_post->ID);
         $job_type = get_field('job_type', $job_post->ID);
-
+    
         echo '<p>Category: ' . esc_html($job_category) . '</p>';
         echo '<p>Location: ' . esc_html($job_location) . '</p>';
         echo '<input type="hidden" value="'.get_the_title($job_post->ID).'" id="Job-title">';
@@ -671,8 +675,18 @@ function jobs_listing() {
         echo '<div class="click-content" data-job="' . esc_html($company_name) . ', ' . esc_html($job_category) . ', ' . esc_html($job_location) . ', ' . esc_html($employment_type) . ', ' . esc_html($compensation) . ', ' . esc_html($job_type) . '"></div>';        
         echo '</a>';
     }
-
+        // Add pagination links
+        echo '<div class="pagination">';
+        echo paginate_links(array(
+            'total'   => $job_query->max_num_pages,
+            'current' => max(1, get_query_var('paged')),
+        ));
+        echo '</div>';
     echo '</div>';
+    
+    // Reset the main query
+    wp_reset_query();
+    
     echo '<div class="job-content" >';
 
     foreach ($job_posts as $index => $job_post) {
