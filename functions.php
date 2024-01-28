@@ -637,7 +637,7 @@ function jobs_listing() {
     
     $job_args = array(
         'post_type'      => 'my-job',
-        'posts_per_page' => 8,
+        'posts_per_page' => 7,
         'orderby'        => 'date',
         'order'          => 'DESC',
         'paged'          => $paged,
