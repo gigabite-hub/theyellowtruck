@@ -19,7 +19,7 @@ get_header();
 
                 if (have_posts()) :
                     echo '<p>Total Result: ' . $wp_query->found_posts . '</p>';
-                echo '<div class="inner-wrapper">'
+                    echo '<div class="inner-wrapper">';
                     while (have_posts()) : the_post();
                 ?>
                         <div class="cp-card">
@@ -54,8 +54,9 @@ get_header();
                                 </div>
                             </article>
                         </div>
+                        
                 <?php endwhile; ?>
-
+                             
                     <?php the_posts_pagination(array('mid_size' => 2)); ?>
 
                 <?php else : ?>
@@ -64,8 +65,8 @@ get_header();
 
                 <?php endif;
                 wp_reset_postdata(); ?>
-            </div>
-        </div>
+        
+        </div>   </div>
     </main>
 </section>
 

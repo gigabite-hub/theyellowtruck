@@ -22,6 +22,7 @@
             $('#application-form #nf-form-1-cont #nf-field-10').val(getCompanyEmail);
             $('#application-form #nf-form-1-cont #nf-field-11').val(jobData);
             $('#companytitle h3').append(getCompanyName);
+            $('#jobtitle .elementor-widget-container').text(jobTitle);
 
         });
 
@@ -61,3 +62,11 @@
     });
 
 })(jQuery);
+
+function filterJobs(selectedState) {
+    // Implement your filtering logic here
+    // You can use AJAX to retrieve and display filtered job posts
+    console.log('Selected State:', selectedState);
+    // Perform filtering based on the selectedState
+    // You might want to use AJAX to fetch and display filtered job posts
+}

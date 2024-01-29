@@ -462,7 +462,7 @@ function display_latest_reviews() {
                 $post_title = get_the_title();
                 $rating = esc_html($custom_fields['rating']);
                 $stars_html = get_star_rating_html($rating);
-				$description = wp_trim_words(get_the_excerpt(), 20);
+				$description = get_the_content();
 
                 echo '<div class="card">';
                 echo '<strong>' . esc_html($post_title) . '</strong>';
@@ -633,6 +633,14 @@ add_action('admin_menu', 'add_draft_count_to_menu');
 function jobs_listing() {
     ob_start();
 
+    $america_states = array(
+        'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
+        'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland',
+        'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey',
+        'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina',
+        'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+    );
+
     $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
     
     $job_args = array(
@@ -645,6 +653,17 @@ function jobs_listing() {
     $job_query = new WP_Query($job_args);
     $job_posts = $job_query->posts;
     
+       // Output the dropdown filter
+       echo '<div class="location-filter">';
+       echo '<label for="location">Filter by State:</label>';
+       echo '<select id="location" onchange="filterJobs(this.value)">';
+       echo '<option value="">All States</option>';
+       foreach ($america_states as $state) {
+           echo '<option value="' . esc_attr($state) . '">' . esc_html($state) . '</option>';
+       }
+       echo '</select>';
+       echo '</div>';
+       
     echo '<div class="job-wrapper" id="job-wrapper">';
     echo '<div class="tabs">';
     
@@ -724,7 +743,7 @@ function jobs_listing() {
         $post_content = get_post_field('job_description', $job_post->ID);
       
         echo wpautop($post_content);
-
+        echo '<a href="/company-profiles/" class="company-profile-btn"> View Company Profile </a>';
         echo '<a href="#applyjobform" class="apply-btn"> Apply Now </a>';
 
         echo '</div></div>';
