@@ -21,7 +21,7 @@
 
             $('#application-form #nf-form-1-cont #nf-field-10').val(getCompanyEmail);
             $('#application-form #nf-form-1-cont #nf-field-11').val(jobData);
-            $('#companytitle h3').append(getCompanyName);
+            $('#companytitle h3').text(getCompanyName);
             $('#jobtitle .elementor-widget-container').text(jobTitle);
 
         });
