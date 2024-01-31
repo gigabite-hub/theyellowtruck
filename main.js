@@ -4,14 +4,17 @@
 
     var defaultTabIndex = jobListingParams.defaultTabIndex;
     var jobIdParam = jobListingParams.jobIdParam;
-
+    
     function activateTabAndContent(index) {
       $(".tabs .job-card, .job-content .tab-content").removeClass("active");
       $(".tabs .job-card").eq(index).addClass("active");
       $(".job-content .tab-content").eq(index).addClass("active");
       updateContent(index);
     }
-
+    
+    // Handle the default case separately
+    activateTabAndContent(defaultTabIndex);
+    
     if (jobIdParam !== 0) {
       var tabIndex = $(".tabs .job-card").index(
         $(
@@ -22,34 +25,29 @@
       );
       if (tabIndex !== -1) {
         activateTabAndContent(tabIndex);
-      } else {
-        activateTabAndContent(defaultTabIndex);
       }
-    } else {
-      activateTabAndContent(defaultTabIndex);
     }
-
+    
     $(".tabs .job-card").on("click", function (e) {
       e.preventDefault();
       var index = $(".tabs .job-card").index($(this));
       activateTabAndContent(index);
     });
-
+    
     function updateContent(index) {
-      var getCompanyEmail = $(
-        ".tabs .job-card.active input#email-hidden"
-      ).val();
+      var getCompanyEmail = $(".tabs .job-card.active input#email-hidden").val();
       var jobTitle = $(".tabs .job-card.active input#Job-title").val();
       var jobData = $(".tabs .job-card.active .click-content").data("job");
       var getCompanyName = $(".tabs .job-card.active .click-content").data(
         "company"
       );
-
+    
       $("#application-form #nf-form-1-cont #nf-field-10").val(getCompanyEmail);
       $("#application-form #nf-form-1-cont #nf-field-11").val(jobData);
       $("#companytitle h3").text(getCompanyName);
       $("#jobtitle .elementor-widget-container").text(jobTitle);
     }
+      
 
     var searchQuery = getParameterByName("s");
     $(".page-title").append(searchQuery);

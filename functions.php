@@ -804,7 +804,7 @@ function jobs_listing_home() {
         $job_permalink = esc_url(get_permalink($job_post->ID));
         $job_openings_url = esc_url(home_url('/job-openings/'));
 
-        echo '<a href="' . $job_openings_url . '?job_id=' . $job_post->ID . '" class="job-list-card"><b>' . esc_html(get_the_title($job_post->ID)) . '</b>';
+        echo '<div class="job-list-card"><b>' . esc_html(get_the_title($job_post->ID)) . '</b>';
         $company_name = "";
         $company_representatives = get_field('company_respentative', $job_post->ID);
         $job_category = get_field('job_category', $job_post->ID);
@@ -828,7 +828,9 @@ function jobs_listing_home() {
         endif;
 
         echo '<div class="click-content" data-company="'.esc_html($company_name).'" data-job="' . esc_html($company_name) . ', ' . esc_html($job_category) . ', ' . esc_html($job_location) . ', ' . esc_html($employment_type) . ', ' . esc_html($compensation) . ', ' . esc_html($job_type) . '"></div>';
+        echo '<a href="' . $job_openings_url . '?job_id=' . $job_post->ID . '" class="job-list-view"><b>View Job</b>';
         echo '</a>';
+        echo '</div>';
     }
     echo '</div>';
 
