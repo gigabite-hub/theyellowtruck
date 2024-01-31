@@ -27,7 +27,13 @@ function mfnch_enqueue_styles()
 
 	wp_dequeue_style('style');
 	wp_enqueue_style('style', get_stylesheet_directory_uri() .'/style.css');
+    $job_listing_params = array(
+        'defaultTabIndex' => 0,
+        'jobIdParam' => isset($_GET['job_id']) ? intval($_GET['job_id']) : 0,
+    );
+
  	wp_enqueue_script('main-js', get_stylesheet_directory_uri() . '/main.js', array('jquery'), null, true);
+     wp_localize_script('main-js', 'jobListingParams', $job_listing_params);
 }
 add_action('wp_enqueue_scripts', 'mfnch_enqueue_styles', 101);
 
