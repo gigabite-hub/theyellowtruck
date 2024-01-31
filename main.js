@@ -2,68 +2,51 @@
   $(document).ready(function () {
     console.log("hello");
 
-        var defaultTabIndex = jobListingParams.defaultTabIndex;
-        var jobIdParam = jobListingParams.jobIdParam;
-
-        $('.tabs .job-card').eq(defaultTabIndex).addClass('active');
-        $('.job-content .tab-content').eq(defaultTabIndex).addClass('active');
+    var defaultTabIndex = jobListingParams.defaultTabIndex;
+    var jobIdParam = jobListingParams.jobIdParam;
     
-        if (jobIdParam !== 0) {
-            var tabIndex = $('.tabs .job-card').index($('.tabs .job-card[data-toggle-target=".tab-content-' + jobIdParam + '"]'));
-            $('.tabs .job-card').eq(tabIndex).addClass('active');
-            $('.job-content .tab-content').eq(tabIndex).addClass('active');
-        }
-        
-    $(".tab").on("click", function (event) {
-      var defaultTabIndex = jobListingParams.defaultTabIndex;
-      var jobIdParam = jobListingParams.jobIdParam;
-
-      $(".tabs .job-card").eq(defaultTabIndex).addClass("active");
-      $(".job-content .tab-content").eq(defaultTabIndex).addClass("active");
-
-      if (jobIdParam !== 0) {
-        var tabIndex = $(".tabs .job-card").index(
-          $(
-            '.tabs .job-card[data-toggle-target=".tab-content-' +
-              jobIdParam +
-              '"]'
-          )
-        );
-        $(".tabs .job-card").eq(tabIndex).addClass("active");
-        $(".job-content .tab-content").eq(tabIndex).addClass("active");
+    function activateTabAndContent(index) {
+      $(".tabs .job-card, .job-content .tab-content").removeClass("active");
+      $(".tabs .job-card").eq(index).addClass("active");
+      $(".job-content .tab-content").eq(index).addClass("active");
+      updateContent(index);
+    }
+    
+    // Handle the default case separately
+    activateTabAndContent(defaultTabIndex);
+    
+    if (jobIdParam !== 0) {
+      var tabIndex = $(".tabs .job-card").index(
+        $(
+          '.tabs .job-card[data-toggle-target=".tab-content-' +
+            jobIdParam +
+            '"]'
+        )
+      );
+      if (tabIndex !== -1) {
+        activateTabAndContent(tabIndex);
       }
-
-      $(".tabs .job-card").on("click", function (e) {
-        e.preventDefault();
-
-        $(".tabs .job-card, .job-content .tab-content").removeClass("active");
-
-        $(this).addClass("active");
-        var targetClass = $(this).data("toggle-target");
-        $(targetClass).addClass("active");
-        updateContent();
-      });
-
-      function updateContent() {
-        var getCompanyEmail = $(
-          ".tabs .job-card.active input#email-hidden"
-        ).val();
-        var jobTitle = $(".tabs .job-card.active input#Job-title").val();
-        var jobData = $(".tabs .job-card.active .click-content").data("job");
-        var getCompanyName = $(".tabs .job-card.active .click-content").data(
-          "company"
-        );
-
-        $("#application-form #nf-form-1-cont #nf-field-10").val(
-          getCompanyEmail
-        );
-        $("#application-form #nf-form-1-cont #nf-field-11").val(jobData);
-        $("#companytitle h3").text(getCompanyName);
-        $("#jobtitle .elementor-widget-container").text(jobTitle);
-      }
-
-      updateContent();
+    }
+    
+    $(".tabs .job-card").on("click", function (e) {
+      e.preventDefault();
+      var index = $(".tabs .job-card").index($(this));
+      activateTabAndContent(index);
     });
+    
+    function updateContent(index) {
+      var getCompanyEmail = $(".tabs .job-card.active input#email-hidden").val();
+      var jobTitle = $(".tabs .job-card.active input#Job-title").val();
+      var jobData = $(".tabs .job-card.active .click-content").data("job");
+      var getCompanyName = $(".tabs .job-card.active .click-content").data(
+        "company"
+      );
+    
+      $("#application-form #nf-form-1-cont #nf-field-10").val(getCompanyEmail);
+      $("#application-form #nf-form-1-cont #nf-field-11").val(jobData);
+      $("#companytitle h3").text(getCompanyName);
+      $("#jobtitle .elementor-widget-container").text(jobTitle);
+    }    
 
     var searchQuery = getParameterByName("s");
     $(".page-title").append(searchQuery);
