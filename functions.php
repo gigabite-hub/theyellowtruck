@@ -666,11 +666,11 @@ function jobs_listing() {
        
     echo '<div class="job-wrapper" id="job-wrapper">';
     echo '<div class="tabs">';
-    
+    $default_tab_index = 0;
     foreach ($job_posts as $index => $job_post) {
-        $tab_class = ($index === 0) ? 'tab active' : 'tab';
-        echo '<a href="#" class="job-card ' . esc_attr($tab_class) . '" data-toggle-target=".tab-content-' . ($index + 1) . '"><b>' . esc_html(get_the_title($job_post->ID)) . '</b>';
-        $company_name = "";
+        $job_id_param = isset($_GET['job_id']) ? intval($_GET['job_id']) : 0;
+        $tab_class = ($index === $default_tab_index || $job_id_param === $job_post->ID) ? 'tab active' : 'tab';
+        echo '<a href="#" class="job-card ' . esc_attr($tab_class) . '" data-toggle-target=".tab-content-' . ($index + 1) . '"><b>' . esc_html(get_the_title($job_post->ID)) . '</b>';        $company_name = "";
         $company_representatives = get_field('company_respentative', $job_post->ID);
         $job_category = get_field('job_category', $job_post->ID);
         $job_location = get_field('job_location', $job_post->ID);
@@ -709,7 +709,7 @@ function jobs_listing() {
     echo '<div class="job-content" >';
 
     foreach ($job_posts as $index => $job_post) {
-        $content_class = ($index === 0) ? 'tab-content tab-content-' . ($index + 1) . ' active' : 'tab-content tab-content-' . ($index + 1);
+         $content_class = ($index === $default_tab_index || $job_id_param === $job_post->ID) ? 'tab-content tab-content-' . ($index + 1) . ' active' : 'tab-content tab-content-' . ($index + 1);
         $company_name = "";
         $company_representatives = get_field('company_respentative', $job_post->ID);
         $job_category = get_field('job_category', $job_post->ID);
@@ -778,5 +778,68 @@ function modify_search_query($query) {
 }
 
 add_action('pre_get_posts', 'modify_search_query');
+
+
+
+function jobs_listing_home() {
+    ob_start();
+
+    $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
+    $job_args = array(
+        'post_type'      => 'my-job',
+        'posts_per_page' => 6,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+        'paged'          => $paged,
+    );
+
+    $job_query = new WP_Query($job_args);
+    $job_posts = $job_query->posts;
+
+    echo '<div class="job-wrapper-home">';
+    echo '<div class="jobs-list">';
+
+    foreach ($job_posts as $index => $job_post) {
+        $job_permalink = esc_url(get_permalink($job_post->ID));
+        $job_openings_url = esc_url(home_url('/job-openings/'));
+
+        echo '<a href="' . $job_openings_url . '?job_id=' . $job_post->ID . '" class="job-list-card"><b>' . esc_html(get_the_title($job_post->ID)) . '</b>';
+        $company_name = "";
+        $company_representatives = get_field('company_respentative', $job_post->ID);
+        $job_category = get_field('job_category', $job_post->ID);
+        $job_location = get_field('job_location', $job_post->ID);
+        $employment_type = get_field('employment_type', $job_post->ID);
+        $compensation = get_field('compensation', $job_post->ID);
+        $job_type = get_field('job_type', $job_post->ID);
+
+        echo '<p>Category: ' . esc_html($job_category) . '</p>';
+        echo '<p>Location: ' . esc_html($job_location) . '</p>';
+        echo '<input type="hidden" value="'.get_the_title($job_post->ID).'" id="Job-title">';
+
+        if ($company_representatives) :
+            foreach ($company_representatives as $post) :
+                setup_postdata($post);
+                $company_name = $post->post_title;
+                $company_email = get_field('company_email', $post->ID);
+                echo '<input type="hidden" value="'.esc_html($company_email).'" id="email-hidden">';
+            endforeach;
+            wp_reset_postdata();
+        endif;
+
+        echo '<div class="click-content" data-company="'.esc_html($company_name).'" data-job="' . esc_html($company_name) . ', ' . esc_html($job_category) . ', ' . esc_html($job_location) . ', ' . esc_html($employment_type) . ', ' . esc_html($compensation) . ', ' . esc_html($job_type) . '"></div>';
+        echo '</a>';
+    }
+    echo '</div>';
+
+    // Reset the main query
+    wp_reset_query();
+
+    return ob_get_clean();
+}
+
+
+
+add_shortcode('jobs-listing-home', 'jobs_listing_home');
 
 
