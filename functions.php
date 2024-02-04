@@ -639,41 +639,68 @@ add_action('admin_menu', 'add_draft_count_to_menu');
 function jobs_listing() {
     ob_start();
 
-    $america_states = array(
-        'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
-        'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland',
-        'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey',
-        'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina',
-        'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
-    );
-
-    $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-    
     $job_args = array(
         'post_type'      => 'my-job',
-        'posts_per_page' => 7,
+        'posts_per_page' => -1,
         'orderby'        => 'date',
         'order'          => 'DESC',
-        'paged'          => $paged,
     );
     $job_query = new WP_Query($job_args);
     $job_posts = $job_query->posts;
+
+ // Collect unique states from job_location field and unique company names
+ $job_locations = array();
+ $company_names = array();
+ foreach ($job_posts as $job_post) {
+     $job_location = get_field('job_location', $job_post->ID);
+     $company_representatives = get_field('company_respentative', $job_post->ID);
+     
+     if (!in_array($job_location, $job_locations)) {
+         $job_locations[] = $job_location;
+     }
+
+     if ($company_representatives) {
+         foreach ($company_representatives as $post) {
+             setup_postdata($post);
+             $company_name = $post->post_title;
+             if (!in_array($company_name, $company_names)) {
+                 $company_names[] = $company_name;
+             }
+         }
+         wp_reset_postdata();
+     }
+ }
     
-       // Output the dropdown filter
-       echo '<div class="location-filter">';
-       echo '<label for="location">Filter by State:</label>';
-       echo '<select id="location" onchange="filterJobs(this.value)">';
-       echo '<option value="">All States</option>';
-       foreach ($america_states as $state) {
-           echo '<option value="' . esc_attr($state) . '">' . esc_html($state) . '</option>';
-       }
-       echo '</select>';
-       echo '</div>';
+       // Output the dropdown filter and filter button
+    echo '<div class="jobs-filter">';
+    echo '<div class="location-filter">';
+    echo '<label for="location">Filter by State:</label>';
+    echo '<select id="location">';
+    echo '<option value="">All States</option>';
+    foreach ($job_locations as $state) {
+        echo '<option value="' . esc_attr($state) . '">' . esc_html($state) . '</option>';
+    }
+    echo '</select>';
+    echo '</div>';  
+
+    echo '<div class="company-filter">';
+    echo '<label for="company">Filter by Company:</label>';
+    echo '<select id="company">';
+    echo '<option value="">All Companies</option>';
+    foreach ($company_names as $company) {
+        echo '<option value="' . esc_attr($company) . '">' . esc_html($company) . '</option>';
+    }
+    echo '</select>';
+    echo '</div>';   
+    
+    echo '<button onclick="filterJobs()">Filter Jobs</button>';
+ 
+    echo '</div>';
        
-    echo '<div class="job-wrapper" id="job-wrapper">';
-    echo '<div class="tabs">';
-    $default_tab_index = 0;
-    foreach ($job_posts as $index => $job_post) {
+       echo '<div class="job-wrapper" id="job-wrapper">';
+       echo '<div class="tabs">';
+       $default_tab_index = 0;
+       foreach ($job_posts as $index => $job_post) {
         $job_id_param = isset($_GET['job_id']) ? intval($_GET['job_id']) : 0;
         $tab_class = ($index === $default_tab_index || $job_id_param === $job_post->ID) ? 'tab active' : 'tab';
         echo '<a href="#" class="job-card ' . esc_attr($tab_class) . '" data-toggle-target=".tab-content-' . ($index + 1) . '"><b>' . esc_html(get_the_title($job_post->ID)) . '</b>';        $company_name = "";
@@ -700,13 +727,7 @@ function jobs_listing() {
         echo '<div class="click-content" data-company="'.esc_html($company_name).'" data-job="' . esc_html($company_name) . ', ' . esc_html($job_category) . ', ' . esc_html($job_location) . ', ' . esc_html($employment_type) . ', ' . esc_html($compensation) . ', ' . esc_html($job_type) . '"></div>';        
         echo '</a>';
     }
-        // Add pagination links
-        echo '<div class="pagination">';
-        echo paginate_links(array(
-            'total'   => $job_query->max_num_pages,
-            'current' => max(1, get_query_var('paged')),
-        ));
-        echo '</div>';
+    
     echo '</div>';
     
     // Reset the main query
