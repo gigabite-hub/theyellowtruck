@@ -63,7 +63,7 @@
       return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 
-    var jobWrapper = $("#job-wrapper");
+    var jobWrapper = $(".tabs");
 
     $(window).scroll(function () {
       var windowScroll = $(window).scrollTop();
@@ -71,26 +71,47 @@
       var jobWrapperHeight = jobWrapper.outerHeight();
       var jobWrapperBottom = jobWrapperOffset + jobWrapperHeight;
       var windowHeight = $(window).height();
-
+    
       // Adjust the bottom position for overflow
       var visibleBottom = windowScroll + windowHeight;
-
+    
       if (
         windowScroll >= jobWrapperOffset &&
         visibleBottom <= jobWrapperBottom
       ) {
-        jobWrapper.addClass("fixed");
+        jobWrapper.parent().addClass("fixed");
       } else {
-        jobWrapper.removeClass("fixed");
+        jobWrapper.parent().removeClass("fixed");
       }
-    });
+    });    
   });
 })(jQuery);
 
-function filterJobs(selectedState) {
-  // Implement your filtering logic here
-  // You can use AJAX to retrieve and display filtered job posts
-  console.log("Selected State:", selectedState);
-  // Perform filtering based on the selectedState
-  // You might want to use AJAX to fetch and display filtered job posts
+function filterJobs() {
+    var selectedState = document.getElementById('location').value;
+    var selectedCompany = document.getElementById('company').value;
+    var jobCards = document.querySelectorAll('.job-card');
+
+    jobCards.forEach(function (card) {
+        var locationElement = card.querySelector('p');
+        var jobLocation = '';
+        if (locationElement) {
+            var locationText = locationElement.textContent || locationElement.innerText;
+            var locationIndex = locationText.indexOf("Location:");
+            if (locationIndex !== -1) {
+                jobLocation = locationText.substring(locationIndex + "Location:".length).trim();
+            }
+        }
+
+        var companyElement = card.querySelector('.click-content');
+        var jobCompany = companyElement ? companyElement.getAttribute('data-company') : '';
+
+        if ((selectedState === '' || selectedState === jobLocation) &&
+            (selectedCompany === '' || selectedCompany === jobCompany)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
 }
+
