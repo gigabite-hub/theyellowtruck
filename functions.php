@@ -717,6 +717,7 @@ function jobs_listing() {
     foreach ($job_posts as $index => $job_post) {
          $content_class = ($index === $default_tab_index || $job_id_param === $job_post->ID) ? 'tab-content tab-content-' . ($index + 1) . ' active' : 'tab-content tab-content-' . ($index + 1);
         $company_name = "";
+        $company_profile_link = "";
         $company_representatives = get_field('company_respentative', $job_post->ID);
         $job_category = get_field('job_category', $job_post->ID);
         $job_location = get_field('job_location', $job_post->ID);
@@ -730,6 +731,7 @@ function jobs_listing() {
             foreach ($company_representatives as $post) :
                 setup_postdata($post);
                 $company_name = $post->post_title;
+                $company_profile_link = $post->guid;
                 $thumbnail_url = get_the_post_thumbnail_url($post->ID, 'thumbnail');
                 if ($thumbnail_url) {
                     echo '<img src="' . esc_url($thumbnail_url) . '" alt="' . esc_attr(get_the_title($post->ID)) . '">';
@@ -749,7 +751,7 @@ function jobs_listing() {
         $post_content = get_post_field('job_description', $job_post->ID);
       
         echo wpautop($post_content);
-        echo '<a href="/company-profiles/" class="company-profile-btn"> View Company Profile </a>';
+        echo '<a href="'.$company_profile_link.'" class="company-profile-btn"> View Company Profile </a>';
         echo '<a href="#applyjobform" class="apply-btn"> Apply Now </a>';
 
         echo '</div></div>';
