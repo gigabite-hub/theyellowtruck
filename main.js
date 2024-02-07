@@ -88,30 +88,26 @@
 })(jQuery);
 
 function filterJobs() {
-    var selectedState = document.getElementById('location').value;
-    var selectedCompany = document.getElementById('company').value;
-    var jobCards = document.querySelectorAll('.job-card');
+  var selectedState = document.getElementById('location').value;
+  var selectedCompany = document.getElementById('company').value;
+  var selectedJobType = document.getElementById('job_type').value;
+  var jobCards = document.querySelectorAll('.job-card');
 
-    jobCards.forEach(function (card) {
-        var locationElement = card.querySelector('p');
-        var jobLocation = '';
-        if (locationElement) {
-            var locationText = locationElement.textContent || locationElement.innerText;
-            var locationIndex = locationText.indexOf("Location:");
-            if (locationIndex !== -1) {
-                jobLocation = locationText.substring(locationIndex + "Location:".length).trim();
-            }
-        }
+  jobCards.forEach(function (card) {
 
-        var companyElement = card.querySelector('.click-content');
-        var jobCompany = companyElement ? companyElement.getAttribute('data-company') : '';
+      var companyElement = card.querySelector('.click-content');
+      var jobLocation = companyElement ? companyElement.getAttribute('data-location') : '';
+      var jobCompany = companyElement ? companyElement.getAttribute('data-company') : '';
+      var jobType = companyElement ? companyElement.getAttribute('data-jobtype') : '';
 
-        if ((selectedState === '' || selectedState === jobLocation) &&
-            (selectedCompany === '' || selectedCompany === jobCompany)) {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
-        }
-    });
+      if ((selectedState === '' || selectedState === jobLocation) &&
+          (selectedCompany === '' || selectedCompany === jobCompany) &&
+          (selectedJobType === '' || selectedJobType === jobType)) {
+          card.style.display = 'block';
+      } else {
+          card.style.display = 'none';
+      }
+  });
 }
+
 

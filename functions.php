@@ -469,9 +469,9 @@ function display_latest_reviews() {
                 $rating = esc_html($custom_fields['rating']);
                 $stars_html = get_star_rating_html($rating);
 				$description = get_the_content();
-
+                
                 echo '<div class="card">';
-                echo '<strong>' . esc_html($post_title) . '</strong>';
+                echo '<h3>' . esc_html($post_title) . '</h3>';
                 echo  $stars_html;
 				echo '<p>' . esc_html($description) . '</p>';
                 echo '</div>';
@@ -651,6 +651,15 @@ function jobs_listing() {
  // Collect unique states from job_location field and unique company names
  $job_locations = array();
  $company_names = array();
+ $job_types = array();
+
+foreach ($job_posts as $job_post) {
+    $job_type = get_field('job_type', $job_post->ID);
+
+    if (!in_array($job_type, $job_types)) {
+        $job_types[] = $job_type;
+    }
+}
  foreach ($job_posts as $job_post) {
      $job_location = get_field('job_location', $job_post->ID);
      $company_representatives = get_field('company_respentative', $job_post->ID);
@@ -692,7 +701,18 @@ function jobs_listing() {
     }
     echo '</select>';
     echo '</div>';   
-    
+
+    echo '<div class="job-type-filter">';
+echo '<label for="job_type">Filter by Job Type:</label>';
+echo '<select id="job_type">';
+echo '<option value="">All Job Types</option>';
+foreach ($job_types as $type) {
+    echo '<option value="' . esc_attr($type) . '">' . esc_html($type) . '</option>';
+}
+echo '</select>';
+echo '</div>';
+
+
     echo '<button onclick="filterJobs()">Filter Jobs</button>';
  
     echo '</div>';
@@ -724,7 +744,7 @@ function jobs_listing() {
             endforeach;
             wp_reset_postdata();
         endif;
-        echo '<div class="click-content" data-company="'.esc_html($company_name).'" data-job="' . esc_html($company_name) . ', ' . esc_html($job_category) . ', ' . esc_html($job_location) . ', ' . esc_html($employment_type) . ', ' . esc_html($compensation) . ', ' . esc_html($job_type) . '"></div>';        
+        echo '<div class="click-content"  data-company="'.esc_html($company_name).'" data-location="'.esc_html($job_location).'" data-jobtype="'.esc_html($job_type).'" data-job="' . esc_html($company_name) . ', ' . esc_html($job_category) . ', ' . esc_html($job_location) . ', ' . esc_html($employment_type) . ', ' . esc_html($compensation) . ', ' . esc_html($job_type) . '"></div>';        
         echo '</a>';
     }
     
