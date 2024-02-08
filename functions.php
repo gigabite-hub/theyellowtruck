@@ -459,24 +459,54 @@ function display_latest_reviews() {
 
     if ($query->have_posts()) {
         echo '<div class="slick-slider">';
+
+        $aggregated_ratings = array();
         while ($query->have_posts()) {
             $query->the_post();
 
             $custom_fields = get_post_meta(get_the_ID(), '_submitted', true);
 
+            if (isset($custom_fields['assigned_posts']) && !empty($custom_fields['assigned_posts'])) {
+                $assigned_posts = explode(',', $custom_fields['assigned_posts']);
+
+                foreach ($assigned_posts as $assigned_post_id) {
+                    $assigned_post_id = trim($assigned_post_id);
+                    if (!isset($aggregated_ratings[$assigned_post_id])) {
+                        $aggregated_ratings[$assigned_post_id] = array(
+                            'total_rating' => 0,
+                            'count' => 0,
+                        );
+                    }
+
+                    $aggregated_ratings[$assigned_post_id]['total_rating'] += intval($custom_fields['rating']);
+                    $aggregated_ratings[$assigned_post_id]['count']++;
+                }
+            }
+
             if (isset($custom_fields['rating'])) {
                 $post_title = get_the_title();
                 $rating = esc_html($custom_fields['rating']);
                 $stars_html = get_star_rating_html($rating);
-				$description = get_the_content();
-                
-                echo '<div class="card">';
-                echo '<h3>' . esc_html($post_title) . '</h3>';
-                echo  $stars_html;
-				echo '<p>' . esc_html($description) . '</p>';
-                echo '</div>';
+                $description = get_the_content();
             }
         }
+
+        // Display reviews outside the loop
+        foreach ($aggregated_ratings as $post_id => $data) {
+            $company_title = get_the_title($post_id);
+            $thumbnail_url = get_the_post_thumbnail_url($post_id, 'thumbnail');
+
+            echo '<div class="card">';
+            echo '<h3>' . esc_html($post_title) . '</h3>';
+            if ($thumbnail_url) {
+                echo '<img src="' . esc_url($thumbnail_url) . '" alt="' . esc_attr(get_the_title($post_id)) . '">';
+            }
+            echo '<p><b>Company:</b> ' . esc_html($company_title) . '</p>';
+            echo $stars_html;
+            echo '<p>' . esc_html($description) . '</p>';
+            echo '</div>';
+        }
+
         echo '</div>';
 
         echo '<script>
@@ -488,10 +518,10 @@ function display_latest_reviews() {
                 autoplaySpeed: 4000,
                 dots: false,
                 arrows: false,
-                variableWidth: false, 
+                variableWidth: false,
             });
         });
-    </script>';
+        </script>';
 
     } else {
         echo '<p>No reviews found.</p>';
@@ -501,7 +531,9 @@ function display_latest_reviews() {
 
     return ob_get_clean();
 }
+
 add_shortcode('latest_reviews', 'display_latest_reviews');
+
 
 
 // Function to handle form submission and save data
