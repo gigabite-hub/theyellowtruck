@@ -2,38 +2,52 @@
   $(document).ready(function () {
     console.log("hello");
 
+
     var defaultTabIndex = jobListingParams.defaultTabIndex;
     var jobIdParam = jobListingParams.jobIdParam;
-    
+
     function activateTabAndContent(index) {
       $(".tabs .job-card, .job-content .tab-content").removeClass("active");
       $(".tabs .job-card").eq(index).addClass("active");
       $(".job-content .tab-content").eq(index).addClass("active");
       updateContent(index);
     }
-    
+
+    var urlParams = new URLSearchParams(window.location.search);
+    var jobId = urlParams.get('job_id');
+    console.log("🚀 ~ jobId:", jobId);
+
+    // $('.job-card').removeClass('active');
+    $('.job-card').each(function () {
+      var tabJobId = $(this).data('job-id');
+
+      if (tabJobId == jobId) {
+        $(this).addClass('active').click();
+      }
+    });
+
     // Handle the default case separately
     activateTabAndContent(defaultTabIndex);
-    
+
     if (jobIdParam !== 0) {
       var tabIndex = $(".tabs .job-card").index(
         $(
           '.tabs .job-card[data-toggle-target=".tab-content-' +
-            jobIdParam +
-            '"]'
+          jobIdParam +
+          '"]'
         )
       );
       if (tabIndex !== -1) {
         activateTabAndContent(tabIndex);
       }
     }
-    
+
     $(".tabs .job-card").on("click", function (e) {
       e.preventDefault();
       var index = $(".tabs .job-card").index($(this));
       activateTabAndContent(index);
     });
-    
+
     function updateContent(index) {
       var getCompanyEmail = $(".tabs .job-card.active input#email-hidden").val();
       var jobTitle = $(".tabs .job-card.active input#Job-title").val();
@@ -41,12 +55,12 @@
       var getCompanyName = $(".tabs .job-card.active .click-content").data(
         "company"
       );
-    
+
       $("#application-form #nf-form-1-cont #nf-field-10").val(getCompanyEmail);
       $("#application-form #nf-form-1-cont #nf-field-11").val(jobData);
       $("#companytitle h3").text(getCompanyName);
       $("#jobtitle .elementor-widget-container").text(jobTitle);
-    }    
+    }
 
     var searchQuery = getParameterByName("s");
     $(".page-title").append(searchQuery);
@@ -71,10 +85,10 @@
       var jobWrapperHeight = jobWrapper.outerHeight();
       var jobWrapperBottom = jobWrapperOffset + jobWrapperHeight;
       var windowHeight = $(window).height();
-    
+
       // Adjust the bottom position for overflow
       var visibleBottom = windowScroll + windowHeight;
-    
+
       if (
         windowScroll >= jobWrapperOffset &&
         visibleBottom <= jobWrapperBottom
@@ -83,7 +97,7 @@
       } else {
         jobWrapper.parent().removeClass("fixed");
       }
-    });    
+    });
   });
 })(jQuery);
 
@@ -95,18 +109,18 @@ function filterJobs() {
 
   jobCards.forEach(function (card) {
 
-      var companyElement = card.querySelector('.click-content');
-      var jobLocation = companyElement ? companyElement.getAttribute('data-location') : '';
-      var jobCompany = companyElement ? companyElement.getAttribute('data-company') : '';
-      var jobType = companyElement ? companyElement.getAttribute('data-jobtype') : '';
+    var companyElement = card.querySelector('.click-content');
+    var jobLocation = companyElement ? companyElement.getAttribute('data-location') : '';
+    var jobCompany = companyElement ? companyElement.getAttribute('data-company') : '';
+    var jobType = companyElement ? companyElement.getAttribute('data-jobtype') : '';
 
-      if ((selectedState === '' || selectedState === jobLocation) &&
-          (selectedCompany === '' || selectedCompany === jobCompany) &&
-          (selectedJobType === '' || selectedJobType === jobType)) {
-          card.style.display = 'block';
-      } else {
-          card.style.display = 'none';
-      }
+    if ((selectedState === '' || selectedState === jobLocation) &&
+      (selectedCompany === '' || selectedCompany === jobCompany) &&
+      (selectedJobType === '' || selectedJobType === jobType)) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
   });
 }
 

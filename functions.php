@@ -658,69 +658,69 @@ function jobs_listing() {
     $job_query = new WP_Query($job_args);
     $job_posts = $job_query->posts;
 
- // Collect unique states from job_location field and unique company names
- $job_locations = array();
- $company_names = array();
- $job_types = array();
+    // Collect unique states from job_location field and unique company names
+    $job_locations = array();
+    $company_names = array();
+    $job_types = array();
 
-foreach ($job_posts as $job_post) {
-    $job_type = get_field('job_type', $job_post->ID);
+    foreach ($job_posts as $job_post) {
+        $job_type = get_field('job_type', $job_post->ID);
 
-    if (!in_array($job_type, $job_types)) {
-        $job_types[] = $job_type;
+        if (!in_array($job_type, $job_types)) {
+            $job_types[] = $job_type;
+        }
     }
-}
- foreach ($job_posts as $job_post) {
-     $job_location = get_field('job_location', $job_post->ID);
-     $company_representatives = get_field('company_respentative', $job_post->ID);
-     
-     if (!in_array($job_location, $job_locations)) {
-         $job_locations[] = $job_location;
-     }
+    foreach ($job_posts as $job_post) {
+        $job_location = get_field('job_location', $job_post->ID);
+        $company_representatives = get_field('company_respentative', $job_post->ID);
+        
+        if (!in_array($job_location, $job_locations)) {
+            $job_locations[] = $job_location;
+        }
 
-     if ($company_representatives) {
-         foreach ($company_representatives as $post) {
-             setup_postdata($post);
-             $company_name = $post->post_title;
-             if (!in_array($company_name, $company_names)) {
-                 $company_names[] = $company_name;
-             }
-         }
-         wp_reset_postdata();
-     }
- }
+        if ($company_representatives) {
+            foreach ($company_representatives as $post) {
+                setup_postdata($post);
+                $company_name = $post->post_title;
+                if (!in_array($company_name, $company_names)) {
+                    $company_names[] = $company_name;
+                }
+            }
+            wp_reset_postdata();
+        }
+    }
     
        // Output the dropdown filter and filter button
     echo '<div class="jobs-filter">';
     echo '<div class="location-filter">';
     echo '<label for="location">Filter by State:</label>';
     echo '<select id="location">';
-    echo '<option value="">All States</option>';
-    foreach ($job_locations as $state) {
-        echo '<option value="' . esc_attr($state) . '">' . esc_html($state) . '</option>';
-    }
+        echo '<option value="">All States</option>';
+        foreach ($job_locations as $state) {
+            echo '<option value="' . esc_attr($state) . '">' . esc_html($state) . '</option>';
+        }
     echo '</select>';
     echo '</div>';  
 
     echo '<div class="company-filter">';
     echo '<label for="company">Filter by Company:</label>';
     echo '<select id="company">';
-    echo '<option value="">All Companies</option>';
-    foreach ($company_names as $company) {
-        echo '<option value="' . esc_attr($company) . '">' . esc_html($company) . '</option>';
-    }
+        echo '<option value="">All Companies</option>';
+        foreach ($company_names as $company) {
+            echo '<option value="' . esc_attr($company) . '">' . esc_html($company) . '</option>';
+        }
     echo '</select>';
     echo '</div>';   
 
     echo '<div class="job-type-filter">';
-echo '<label for="job_type">Filter by Job Type:</label>';
-echo '<select id="job_type">';
-echo '<option value="">All Job Types</option>';
-foreach ($job_types as $type) {
-    echo '<option value="' . esc_attr($type) . '">' . esc_html($type) . '</option>';
-}
-echo '</select>';
-echo '</div>';
+    echo '<label for="job_type">Filter by Job Type:</label>';
+    echo '<select id="job_type">';
+    echo '<option value="">All Job Types</option>';
+    foreach ($job_types as $type) {
+        echo '<option value="' . esc_attr($type) . '">' . esc_html($type) . '</option>';
+    }
+    echo '</select>';
+    echo '</div>';
 
 
     echo '<button onclick="filterJobs()">Filter Jobs</button>';
@@ -733,7 +733,7 @@ echo '</div>';
        foreach ($job_posts as $index => $job_post) {
         $job_id_param = isset($_GET['job_id']) ? intval($_GET['job_id']) : 0;
         $tab_class = ($index === $default_tab_index || $job_id_param === $job_post->ID) ? 'tab active' : 'tab';
-        echo '<a href="#" class="job-card ' . esc_attr($tab_class) . '" data-toggle-target=".tab-content-' . ($index + 1) . '"><b>' . esc_html(get_the_title($job_post->ID)) . '</b>';        $company_name = "";
+        echo '<a href="#" data-job-id="'.$job_post->ID.'" class="job-card ' . esc_attr($tab_class) . '" data-toggle-target=".tab-content-' . ($index + 1) . '"><b>' . esc_html(get_the_title($job_post->ID)) . '</b>';        $company_name = "";
         $company_representatives = get_field('company_respentative', $job_post->ID);
         $job_category = get_field('job_category', $job_post->ID);
         $job_location = get_field('job_location', $job_post->ID);
@@ -809,6 +809,7 @@ echo '</div>';
     }
 
     echo '</div></div>';
+
 
     return ob_get_clean();
 }
