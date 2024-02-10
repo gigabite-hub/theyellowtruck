@@ -372,12 +372,12 @@ add_shortcode('leaderboard', 'display_leaderboard');
 function display_leader() {
     ob_start();
 
-		$args = array(
-			'post_type'      => 'site-review',
-			 'posts_per_page' => 12,
-			'orderby'        => 'date',
-			'order'          => 'DESC',
-		);
+    $args = array(
+        'post_type'      => 'site-review',
+        'posts_per_page' => 12,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    );
     $query = new WP_Query($args);
 
     if ($query->have_posts()) {
@@ -400,7 +400,7 @@ function display_leader() {
                     if (!isset($aggregated_ratings[$assigned_post_id])) {
                         $aggregated_ratings[$assigned_post_id] = array(
                             'total_rating' => 0,
-                            'count' => 0,
+                            'count'        => 0,
                         );
                     }
 
@@ -410,8 +410,16 @@ function display_leader() {
             }
         }
 
-        foreach ($aggregated_ratings as $post_id => $data) {
-            $post_title = get_the_title($post_id);
+        // Custom sorting function based on average rating
+        usort($aggregated_ratings, function ($a, $b) {
+            $average_rating_a = ($a['count'] > 0) ? round($a['total_rating'] / $a['count'], 1) : 0;
+            $average_rating_b = ($b['count'] > 0) ? round($b['total_rating'] / $b['count'], 1) : 0;
+
+            return $average_rating_b <=> $average_rating_a;
+        });
+
+        foreach ($aggregated_ratings as $data) {
+            $post_title = get_the_title($data['post_id']);
             $total_rating = $data['total_rating'];
             $count = $data['count'];
             $average_rating = ($count > 0) ? round($total_rating / $count, 1) : 0;
