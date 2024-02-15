@@ -605,7 +605,7 @@ function company_profile_form_shortcode() {
         </div>
 <div>
 		<label for="company_employees">Company Employees <span class="req-label">*</span></label>
-        <input type="text" name="company_employees" required>
+        <input type="text" name="company_employees" required style="    height: 63px;">
         </div>
         <div>
         <label for="company_description">Company Description (Optional)</label>
@@ -913,3 +913,88 @@ function jobs_listing_home() {
 add_shortcode('jobs-listing-home', 'jobs_listing_home');
 
 
+function slick_slider_shortcode() {
+    ob_start(); ?>
+
+    <div class="slick-slider-container hero-slider">
+        <div class="slick-slider">
+            <?php
+            // Dummy card data
+            $dummy_cards = array(
+                array(
+                    'image'       => 'https://theyellowtruck.com/wp-content/uploads/2024/01/Behind-the-Wheel_-Truckers-as-Community-Champions-min.jpg',
+                    'heading'     => 'Get Started',
+                    'description' => 'Create an account and explore everything The Yellow Truck has to offer.',
+                    'button_text' => 'Sign Up',
+                ),
+                array(
+                    'image'       => 'https://theyellowtruck.com/wp-content/uploads/2024/01/Behind-the-Wheel_-Truckers-as-Community-Champions-min.jpg',
+                    'heading'     => 'Explore Jobs',
+                    'description' => 'Browse job listings from dozens of carriers that are actively hiring.',
+                    'button_text' => 'Browse Jobs',
+                ),
+                array(
+                    'image'       => 'https://theyellowtruck.com/wp-content/uploads/2024/01/Behind-the-Wheel_-Truckers-as-Community-Champions-min.jpg',
+                    'heading'     => 'Rate Trucking Carriers',
+                    'description' => 'Browse companies and leave your review for other truckers to see. All ratings are tracked for The Golden Truck Award.',
+                    'button_text' => 'Rate a Carrier',
+                ),
+                array(
+                    'image'       => 'https://theyellowtruck.com/wp-content/uploads/2024/01/Behind-the-Wheel_-Truckers-as-Community-Champions-min.jpg',
+                    'heading'     => 'Rate Trucking Carriers',
+                    'description' => 'Browse companies and leave your review for other truckers to see. All ratings are tracked for The Golden Truck Award.',
+                    'button_text' => 'Rate a Carrier',
+                ),
+                // Add more dummy cards as needed
+            );
+
+            foreach ($dummy_cards as $card) :
+                ?>
+                <div class="slick-slide">
+                    <img src="<?php echo esc_url($card['image']); ?>" alt="<?php echo esc_attr($card['heading']); ?>">
+                    <h2><?php echo esc_html($card['heading']); ?></h2>
+                    <p><?php echo esc_html($card['description']); ?></p>
+                    <a href="#" class="button"><?php echo esc_html($card['button_text']); ?></a>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <script>
+        jQuery(document).ready(function ($) {
+            $('.slick-slider').slick({
+            centerMode: true,
+            slidesToShow: 3,
+            centerPadding: '0px',
+            arrows: false,
+            autoplay: true,
+            autoplaySpeed: 2000,
+            infinite: true,
+            responsive: [
+                {
+                breakpoint: 768,
+                settings: {
+                    arrows: false,
+                    centerMode: true,
+                    slidesToShow: 3
+                }
+                },
+                {
+                breakpoint: 480,
+                settings: {
+                    arrows: false,
+                    centerMode: true,
+                    slidesToShow: 1
+                }
+                }
+            ]
+});
+	
+        });
+    </script>
+
+    <?php
+    return ob_get_clean();
+}
+
+add_shortcode('slick_slider', 'slick_slider_shortcode');
