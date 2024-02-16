@@ -916,8 +916,8 @@ add_shortcode('jobs-listing-home', 'jobs_listing_home');
 function slick_slider_shortcode() {
     ob_start(); ?>
 
-    <div class="slick-slider-container hero-slider">
-        <div class="slick-slider">
+    <div class="slick-slider-container">
+        <div class="hero-slider">
             <?php
             // Dummy card data
             $dummy_cards = array(
@@ -959,40 +959,6 @@ function slick_slider_shortcode() {
             <?php endforeach; ?>
         </div>
     </div>
-
-    <script>
-        jQuery(document).ready(function ($) {
-            $('.slick-slider').slick({
-            centerMode: true,
-            slidesToShow: 3,
-            centerPadding: '0px',
-            arrows: false,
-            autoplay: true,
-            autoplaySpeed: 2000,
-            infinite: true,
-            responsive: [
-                {
-                breakpoint: 768,
-                settings: {
-                    arrows: false,
-                    centerMode: true,
-                    slidesToShow: 3
-                }
-                },
-                {
-                breakpoint: 480,
-                settings: {
-                    arrows: false,
-                    centerMode: true,
-                    slidesToShow: 1
-                }
-                }
-            ]
-});
-	
-        });
-    </script>
-
     <?php
     return ob_get_clean();
 }
