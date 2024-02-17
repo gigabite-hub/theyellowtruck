@@ -399,6 +399,7 @@ function display_leader() {
                     $assigned_post_id = trim($assigned_post_id);
                     if (!isset($aggregated_ratings[$assigned_post_id])) {
                         $aggregated_ratings[$assigned_post_id] = array(
+                            'post_id' => $assigned_post_id,
                             'total_rating' => 0,
                             'count'        => 0,
                         );
@@ -466,7 +467,7 @@ function display_latest_reviews() {
     $query = new WP_Query($args);
     
     if ($query->have_posts()) {
-        echo '<div class="slick-slider">';
+        echo '<div class="reviews-slider">';
         while ($query->have_posts()) {
             $query->the_post();
 
@@ -497,7 +498,7 @@ function display_latest_reviews() {
 
         echo '<script>
         jQuery(document).ready(function($) {
-            $(".slick-slider").slick({
+            $(".reviews-slider").slick({
                 slidesToShow: 1,
                 slidesToScroll: 1,
                 autoplay: true,

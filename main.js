@@ -98,6 +98,36 @@
         jobWrapper.parent().removeClass("fixed");
       }
     });
+    $('.hero-slider').slick({
+      centerMode: true,
+      slidesToShow: 3,
+      centerPadding: '0px',
+      arrows: true,
+      autoplay: false,
+      autoplaySpeed: 2000,
+      infinite: true,
+      variableWidth: true,
+      responsive: [
+        {
+          breakpoint: 768,
+          settings: {
+            arrows: true,
+            centerMode: true,
+            slidesToShow: 3,
+            variableWidth: true
+          }
+        },
+        {
+          breakpoint: 480,
+          settings: {
+            arrows: true,
+            centerMode: true,
+            slidesToShow: 1,
+            variableWidth: true
+          }
+        }
+      ]
+    });
   });
 })(jQuery);
 
@@ -123,35 +153,4 @@ function filterJobs() {
     }
   });
 }
-
-jQuery(document).ready(function ($) {
-  $('.hero-slider').slick({
-  centerMode: true,
-  slidesToShow: 3,
-  centerPadding: '0px',
-  arrows: false,
-  autoplay: true,
-  autoplaySpeed: 2000,
-  infinite: true,
-  responsive: [
-      {
-      breakpoint: 768,
-      settings: {
-          arrows: false,
-          centerMode: true,
-          slidesToShow: 3
-      }
-      },
-      {
-      breakpoint: 480,
-      settings: {
-          arrows: false,
-          centerMode: true,
-          slidesToShow: 1
-      }
-      }
-  ]
-});
-
-});
 
