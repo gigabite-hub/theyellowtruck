@@ -98,36 +98,32 @@
         jobWrapper.parent().removeClass("fixed");
       }
     });
-    $('.hero-slider').slick({
-      centerMode: true,
-      slidesToShow: 3,
-      centerPadding: '0px',
-      arrows: true,
-      autoplay: false,
-      autoplaySpeed: 2000,
-      infinite: true,
-      variableWidth: true,
-      responsive: [
-        {
-          breakpoint: 768,
-          settings: {
-            arrows: true,
-            centerMode: true,
-            slidesToShow: 3,
-            variableWidth: true
-          }
-        },
-        {
-          breakpoint: 480,
-          settings: {
-            arrows: true,
-            centerMode: true,
-            slidesToShow: 1,
-            variableWidth: true
-          }
-        }
-      ]
-    });
+    var mySwiper = new Swiper('.home-swiper-container', {
+      loop: false,
+      speed: 1000,
+      // autoplay: {
+      //     delay: 3000,
+      // },
+      effect: 'coverflow',
+      grabCursor: true,
+      centeredSlides: true,
+      slidesPerView: '3',
+      coverflowEffect: {
+          rotate: 0,
+          stretch: 80,
+          depth: 200,
+          modifier: 1,
+          slideShadows: false,
+      },
+  
+      // Navigation arrows
+      navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+      },
+      initialSlide: 1,
+  });  
+  
   });
 })(jQuery);
 

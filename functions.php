@@ -42,6 +42,9 @@ function enqueue_slick_scripts() {
     wp_enqueue_script('slick-script', 'https://unpkg.com/slick-carousel@1.8.1/slick/slick.min.js', array('jquery'), null, true);
     wp_enqueue_style('slick-style', 'https://unpkg.com/slick-carousel@1.8.1/slick/slick.css');
     wp_enqueue_style('slick-theme-style', 'https://unpkg.com/slick-carousel@1.8.1/slick/slick-theme.css');
+
+    wp_enqueue_script('swiper-script', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', array('jquery'), null, true);
+    wp_enqueue_style('swiper-style', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
 }
 
 add_action('wp_enqueue_scripts', 'enqueue_slick_scripts');
@@ -909,16 +912,14 @@ function jobs_listing_home() {
     return ob_get_clean();
 }
 
-
-
 add_shortcode('jobs-listing-home', 'jobs_listing_home');
 
 
-function slick_slider_shortcode() {
+function swiper_slider_shortcode() {
     ob_start(); ?>
 
-    <div class="slick-slider-container">
-        <div class="hero-slider">
+<div class="home-swiper-container">
+    <div class="swiper-wrapper">
             <?php
             // Dummy card data
             $dummy_cards = array(
@@ -929,29 +930,23 @@ function slick_slider_shortcode() {
                     'button_text' => 'Sign Up',
                 ),
                 array(
-                    'image'       => 'https://theyellowtruck.com/wp-content/uploads/2024/01/Behind-the-Wheel_-Truckers-as-Community-Champions-min.jpg',
+                    'image'       => 'https://theyellowtruck.com/wp-content/uploads/2024/01/On-the-Road-to-Opportunity_-Navigating-the-Current-Landscape-of-Trucking-Employment.jpg',
                     'heading'     => 'Explore Jobs',
                     'description' => 'Browse job listings from dozens of carriers that are actively hiring.',
                     'button_text' => 'Browse Jobs',
                 ),
                 array(
-                    'image'       => 'https://theyellowtruck.com/wp-content/uploads/2024/01/Behind-the-Wheel_-Truckers-as-Community-Champions-min.jpg',
+                    'image'       => 'https://theyellowtruck.com/wp-content/uploads/2024/01/ezgif-1-02c1ca0125.jpg',
                     'heading'     => 'Rate Trucking Carriers',
                     'description' => 'Browse companies and leave your review for other truckers to see. All ratings are tracked for The Golden Truck Award.',
                     'button_text' => 'Rate a Carrier',
                 ),
-                array(
-                    'image'       => 'https://theyellowtruck.com/wp-content/uploads/2024/01/Behind-the-Wheel_-Truckers-as-Community-Champions-min.jpg',
-                    'heading'     => 'Rate Trucking Carriers',
-                    'description' => 'Browse companies and leave your review for other truckers to see. All ratings are tracked for The Golden Truck Award.',
-                    'button_text' => 'Rate a Carrier',
-                ),
-                // Add more dummy cards as needed
+                
             );
 
             foreach ($dummy_cards as $card) :
                 ?>
-                <div class="slick-slide">
+                <div class="swiper-slide">
                     <img src="<?php echo esc_url($card['image']); ?>" alt="<?php echo esc_attr($card['heading']); ?>">
                     <h2><?php echo esc_html($card['heading']); ?></h2>
                     <p><?php echo esc_html($card['description']); ?></p>
@@ -959,9 +954,11 @@ function slick_slider_shortcode() {
                 </div>
             <?php endforeach; ?>
         </div>
+        <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
     </div>
     <?php
     return ob_get_clean();
 }
 
-add_shortcode('slick_slider', 'slick_slider_shortcode');
+add_shortcode('swiper_slider', 'swiper_slider_shortcode');
