@@ -107,7 +107,7 @@
       effect: 'coverflow',
       grabCursor: true,
       centeredSlides: true,
-      slidesPerView: '3',
+      slidesPerView: 'auto',
       coverflowEffect: {
           rotate: 0,
           stretch: 80,
@@ -121,7 +121,6 @@
           nextEl: '.swiper-button-next',
           prevEl: '.swiper-button-prev',
       },
-      initialSlide: 1,
   });  
   
   });

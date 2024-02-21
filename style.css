@@ -34,7 +34,17 @@ Text Domain: tyt
 }
 
 
-
+.home-swiper-container {
+width: 750px;
+}
+.home-swiper-container {
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    list-style: none;
+    padding: 0;
+    z-index: 1;
+}
 .home-swiper-container .swiper-slide {
     width: 300px !important;
     background: #fff;
@@ -92,8 +102,8 @@ Text Domain: tyt
     font-size: 22px;
 }
 .home-swiper-container .swiper-button-prev  {
-  left: 38%;
+  left: 27%;
 }
 .home-swiper-container .swiper-button-next  {
-right: 13%;
+right: 27%;
 }

@@ -924,22 +924,32 @@ function swiper_slider_shortcode() {
             // Dummy card data
             $dummy_cards = array(
                 array(
-                    'image'       => 'https://theyellowtruck.com/wp-content/uploads/2024/01/Behind-the-Wheel_-Truckers-as-Community-Champions-min.jpg',
+                    'image'       => '/wp-content/uploads/2024/01/Behind-the-Wheel_-Truckers-as-Community-Champions-min.jpg',
                     'heading'     => 'Get Started',
                     'description' => 'Create an account and explore everything The Yellow Truck has to offer.',
                     'button_text' => 'Sign Up',
+                    'url' => '/membership-account/membership-levels/',
                 ),
                 array(
-                    'image'       => 'https://theyellowtruck.com/wp-content/uploads/2024/01/On-the-Road-to-Opportunity_-Navigating-the-Current-Landscape-of-Trucking-Employment.jpg',
+                    'image'       => '/wp-content/uploads/2024/02/explore-jobs.png',
                     'heading'     => 'Explore Jobs',
                     'description' => 'Browse job listings from dozens of carriers that are actively hiring.',
                     'button_text' => 'Browse Jobs',
+                    'url' => '/job-openings/',
                 ),
                 array(
-                    'image'       => 'https://theyellowtruck.com/wp-content/uploads/2024/01/ezgif-1-02c1ca0125.jpg',
+                    'image'       => '/wp-content/uploads/2024/02/rate-a-carrier.png',
                     'heading'     => 'Rate Trucking Carriers',
                     'description' => 'Browse companies and leave your review for other truckers to see. All ratings are tracked for The Golden Truck Award.',
                     'button_text' => 'Rate a Carrier',
+                    'url' => '/company-profiles/',
+                ),
+                array(
+                    'image'       => '/wp-content/uploads/2024/02/golden-truck-award.png',
+                    'heading'     => 'Golden Truck Awards',
+                    'description' => 'The Golden Truck Award celebrates carriers that top our "Rate a Carrier" list, highlighting their excellence in service and reliability.',
+                    'button_text' => 'Explore Now',
+                    'url' => '/golden-truck-award/',
                 ),
                 
             );
@@ -950,7 +960,7 @@ function swiper_slider_shortcode() {
                     <img src="<?php echo esc_url($card['image']); ?>" alt="<?php echo esc_attr($card['heading']); ?>">
                     <h2><?php echo esc_html($card['heading']); ?></h2>
                     <p><?php echo esc_html($card['description']); ?></p>
-                    <a href="#" class="button"><?php echo esc_html($card['button_text']); ?></a>
+                    <a href="<?php echo esc_url($card['url']); ?>" class="button"><?php echo esc_html($card['button_text']); ?></a>
                 </div>
             <?php endforeach; ?>
         </div>
