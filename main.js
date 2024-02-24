@@ -156,6 +156,7 @@ function filterJobs() {
 function filterCompanies() {
   var companySize = document.getElementById('company-size').value;
   var companyName = document.getElementById('company-name').value;
+  var companyLocation = document.getElementById('company-location').value;
 
   // Show loading message
   document.querySelector('.companys-list').innerHTML = '<p>Loading...</p>';
@@ -166,8 +167,9 @@ function filterCompanies() {
       url: ajax_object.ajaxurl,
       data: {
           action: 'filter_companies',
-          company_size: encodeURIComponent(companySize),
-          company_name: encodeURIComponent(companyName)
+          company_employees: encodeURIComponent(companySize),
+          company_name: encodeURIComponent(companyName),
+          company_location: encodeURIComponent(companyLocation)
       },
       success: function (response) {
           // Update the companies list with the filtered results
@@ -179,6 +181,7 @@ function filterCompanies() {
       }
   });
 }
+
 
 // Add a function to reset the filters and show all companies
 function resetFilters() {

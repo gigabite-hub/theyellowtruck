@@ -310,71 +310,6 @@ function company_jobs_shortcode() {
 }
 add_shortcode('company_jobs', 'company_jobs_shortcode');
 
-
-function display_leaderboard() {
-    ob_start();
-
-    $args = array(
-        'post_type'      => 'site-review',
-			 'posts_per_page' => 12,
-			'orderby'        => 'date',
-			'order'          => 'DESC',
-    );
-    $query = new WP_Query($args);
-
-    if ($query->have_posts()) {
-        echo '<table class="leaderboard">';
-        echo '<thead><tr><th>Name</th><th>Rating</th><th>Total Count</th><th>Stars</th></tr></thead><tbody>';
-
-        // Initialize the array to store aggregated ratings and counts
-        $aggregated_ratings = array();
-
-        while ($query->have_posts()) {
-            $query->the_post();
-
-            $custom_fields = get_post_meta(get_the_ID(), '_submitted', true);
-
-            if (isset($custom_fields['assigned_posts']) && !empty($custom_fields['assigned_posts'])) {
-                $assigned_posts = explode(',', $custom_fields['assigned_posts']);
-
-                foreach ($assigned_posts as $assigned_post_id) {
-                    $assigned_post_id = trim($assigned_post_id);
-                    if (!isset($aggregated_ratings[$assigned_post_id])) {
-                        $aggregated_ratings[$assigned_post_id] = array(
-                            'total_rating' => 0,
-                            'count' => 0,
-                        );
-                    }
-
-                    $aggregated_ratings[$assigned_post_id]['total_rating'] += intval($custom_fields['rating']);
-                    $aggregated_ratings[$assigned_post_id]['count']++;
-                }
-            }
-        }
-
-        foreach ($aggregated_ratings as $post_id => $data) {
-            $post_title = get_the_title($post_id);
-            $total_rating = $data['total_rating'];
-            $count = $data['count'];
-            $average_rating = ($count > 0) ? round($total_rating / $count, 1) : 0;
-
-            echo '<tr>';
-            echo '<td>' . esc_html($post_title) . '</td>';
-            echo '<td>' . esc_html($average_rating) . '</td>';
-            echo '<td>' . esc_html($count) . '</td>'; // New column for total count
-            echo '<td>' . get_star_rating_html($average_rating) . '</td>';
-            echo '</tr>';
-        }
-
-        echo '</tbody></table>';
-    }
-
-    wp_reset_postdata();
-
-    return ob_get_clean();
-}
-add_shortcode('leaderboard', 'display_leaderboard');
-
 function display_leader() {
     ob_start();
 
@@ -997,11 +932,10 @@ add_action('wp_ajax_nopriv_filter_companies', 'filter_companies');
 
 function filter_companies() {
     ob_start();
-
-    $company_size = isset($_GET['company_size']) ? sanitize_text_field($_GET['company_size']) : '';
+   
+    $company_employees = isset($_GET['company_employees']) ? sanitize_text_field($_GET['company_employees']) : '';
     $company_name = isset($_GET['company_name']) ? sanitize_text_field($_GET['company_name']) : '';
-
-
+    $company_locations = array();
     $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 
     $company_args = array(
@@ -1011,21 +945,29 @@ function filter_companies() {
         'order'          => 'DESC',
         'paged'          => $paged,
     );
-    
-        if ($company_name) {
-            $company_args['s'] = $company_name;
-        }
-            // Add filtering conditions
-    if ($company_size) {
+
+    if ($company_name) {
+        $company_args['s'] = $company_name;
+    }
+
+    if ($company_employees) {
         $company_args['meta_query'][] = array(
             'key'     => 'company_employees',
-            'value'   => $company_size,
+            'value'   => $company_employees,
             'compare' => 'LIKE',
         );
     }
-    
-        $company_query = new WP_Query($company_args);
-        $company_posts = $company_query->posts;
+
+    $company_query = new WP_Query($company_args);
+    $company_posts = $company_query->posts;
+
+    foreach ($company_posts as $company_post) {
+        $company_location = get_field('company_location', $company_post->ID);
+
+        if (!in_array($company_location, $company_locations)) {
+            $company_locations[] = $company_location;
+        }
+    }
 
     echo '<div class="companys-filter">';
     echo '<div class="company-size-filter">';
@@ -1037,6 +979,16 @@ function filter_companies() {
     echo '<option value="large">Large (201+ employees)</option>';
     echo '</select>';
     echo '</div>';
+    echo '<div class="location-filter">';
+    echo '<label for="location">Filter by State:</label>';
+    echo '<select id="company-location">';
+        echo '<option value="">All States</option>';
+        foreach ($company_locations as $state) {
+            echo '<option value="' . esc_attr($state) . '">' . esc_html($state) . '</option>';
+        }
+    echo '</select>';
+    echo '</div>';  
+
     echo '<div class="company-name-filter">';
     echo '<label for="company-name">Filter by Company Name:</label>';
     echo '<input type="text" id="company-name">';

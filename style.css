@@ -166,11 +166,12 @@ input[type="date"], input[type="email"], input[type="number"], input[type="passw
 }
 .jobs-filter, .companys-filter{
     display: flex;
+    flex-wrap: wrap;
     align-items: end;
-    column-gap: 30px;
     background-color: #d7d7d7;
     padding: 20px;
     margin-bottom: 30px;
+    gap: 15px;
 }
 .jobs-filter button, .companys-filter button{
     background-color: #303133;
@@ -215,4 +216,312 @@ display: -webkit-box;
     display: flex;
     justify-content: center;
     column-gap: 5px;
+}
+
+.styled-leader{
+    box-shadow: 0 7px 14px 0 rgb(8 15 52/3%);
+        border: 1px solid #ebebeb;
+    border-radius: 12px;
+    transition: all 0.3s ease-in-out;
+    padding: 20px;
+        background-color: #262626;
+
+}
+
+.styled-leader table td{
+    font-size: 14px;
+    line-height: 18px;
+        color: #fff;
+    border-color: #f7f7f763;
+}
+.leader thead th{
+    background-color: #300843;
+    color: #fff;
+}
+.leader tbody td{
+    border-left: 0;
+    border-right: 0;
+}
+.c_row{
+    display: flex;
+     flex-wrap: wrap;
+}
+.c_row div{
+    width: 50%;
+    padding: 0 20px;
+}
+.c_row div input, .c_row div textarea, .c_row div select{
+    width: 100%;
+}
+.c_row div label{
+color: #000;
+}
+.c_submit{
+    display: flex;
+    justify-content: end;
+}
+.req-label{
+  color: red;
+}
+.job-card{
+        padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 7px 14px 0 rgb(8 15 52/3%);
+        border: 1px solid #ebebeb;
+    border-radius: 12px;
+    transition: all 0.3s ease-in-out;
+	display: block;
+	  color: #000;
+    display: block;
+	width: 100%;
+}
+.job-card:hover, .job-card.active{
+        border-color: #fed50e;
+	color: #fed50e;
+    transform: translatey(-5px);
+}
+.job-card img{
+   width: 80px;
+    
+}
+.job-card h4, .job-card p{
+      margin: 0;
+    color: #000;
+    display: block;
+}
+.job-wrapper{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.tabs{
+    width: 35%;
+    padding: 15px;
+}
+.job-content{
+	    width: 50rem;
+    height: 100vh;
+    overflow-y: scroll;
+}
+.tabs{
+     height: 100vh;
+    overflow-y: scroll;   
+}
+.job-wrapper.fixed .job-content{
+     position: fixed;
+    top: 110px;
+    left: 40%;
+    height: calc(100vh - 100px);
+}
+.job-content::-webkit-scrollbar, .tabs::-webkit-scrollbar  {
+  width: 10px;
+}
+
+.job-content::-webkit-scrollbar-track, .tabs::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+.job-content::-webkit-scrollbar-thumb, .tabs::-webkit-scrollbar-thumb {
+  background: #000; 
+  border-radius: 10px;
+}
+.job-content .tab-content{
+        border: 1px solid #ebebeb;
+    border-radius: 12px;
+    padding: 20px;
+}
+.job-content .tab-content img{
+    width: 180px;
+}
+.job-content .tab-content p{
+    color: #000;
+}
+#searchform{
+    display: flex;
+    gap: 25px;
+}
+.company-search-page .company-profile {
+        border: 2px solid #FCD411;
+    border-radius: 6px;
+    box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.5);
+    padding: 20px;
+}
+.company-search-page .company-profile .entry-title a{
+    font-size: 24px;
+    line-height: 30px;
+    color: #303133 !important;
+} 
+.loop-wrapper, .page-conatiner{
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.inner-wrapper{
+    display: flex;
+    flex-wrap: wrap;
+	margin: 0 -15px;
+}
+.loop-wrapper .cp-card{
+    width: 30.3333%;
+    margin-bottom: 20px;
+    padding: 0 15px;
+}
+.cp-card h2 {
+    font-size: 55px;
+    line-height: 24px;
+}
+.company-search-page .page-title{
+    color: #000;
+    padding: 40px 20px;
+    font-size: 50px;
+}
+.apply-btn{
+    position: sticky;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    display: block;
+    padding: 20px;
+    background-color: #303133;
+    border-color: #303133;
+    color: #fcd411;
+    text-align: center;
+}
+.apply-btn:hover{
+    color: #fff;
+}
+footer ul li a{
+    color: #fff !important;
+}
+footer ul li a svg path{
+    fill: #fff;
+}
+.loop-wrapper .cp-card .post-thumbnail img{
+        max-width: 200px;
+    height: 100px;
+    object-fit: contain;
+}
+.pagination .page-numbers {
+    padding: 5px 8px;
+    border: 1px solid #BEBEBE;
+    border-radius: 4px;
+    margin: 0;
+    color: #000;
+}
+.pagination{
+    width: 100%;
+}
+.pagination .nav-links{
+    text-align: center;
+    margin: 40px auto 40px auto;
+}
+.job-wrapper-home .jobs-list{
+ display: flex;
+    column-gap: 10px;
+}
+.job-list-card{
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 7px 14px 0 rgb(8 15 52/3%);
+    border: 1px solid #ebebeb;
+    border-radius: 12px;
+    transition: all 0.3s ease-in-out;
+    display: block;
+    color: #000;
+    display: block;
+    width: 100%;
+}
+.job-list-card h4, .job-list-card p {
+    margin: 0;
+    color: #000;
+    display: block;
+}
+.job-list-view{
+    background-color: #FED50E;
+    color: #000;
+    padding:10px 20px;
+    display: inline-block;
+    margin-top: 20px;
+    transition: all 0.3s ease-in-out;
+}
+.job-list-view:hover{
+    background-color: #000;
+    color: #fff;
+}
+.job-list-card:hover{
+        box-shadow: 0 7px 14px 0 rgb(8 15 52/3%);
+    border-color: #FED50E;
+}
+.company-profile-btn{
+    margin-bottom: 30px;
+    display: inline-block;
+    border-bottom: 1px solid;
+    padding-bottom: 5px;
+    color: #000;
+    transition: all 0.3s ease-in-out;
+}
+.company-profile-btn:hover{
+   color: #fcd411;
+    font-weight: 700;
+}
+.job-content h3, .job-content p, .job-content ul li{
+    margin-bottom: 10px;
+          color: #303133;
+}
+.c-reviews .card{
+border: 1px solid #222222;
+    padding: 45px;
+    border-radius: 6px;
+    color: #000;
+    min-height: 550px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+.c-reviews strong{
+    display: block;
+}
+.star-rating {
+    display: flex;
+    font-size: 20px;
+}
+.slick-slide .star-rating{
+		margin-top: 8px;
+	margin-bottom: 30px;
+}
+.star {
+    display: inline-block;
+    font-size: 30px;
+    color: #ddd;
+    margin-right: 2px;
+}
+
+.star.filled {
+    color: #f8d100;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+.card.slick-slide  img{
+margin-left: 0;
+    max-width: 200px;
+    width: 100%;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 20px;
+}
+
+@media  (max-width: 767px) {
+    .tabs {
+        margin-bottom: 30px;
+    }
+    .company-list-card {
+        width: 100%;
+    }
+    .job-wrapper-home .jobs-list{
+        flex-wrap: wrap;
+    }    
 }
