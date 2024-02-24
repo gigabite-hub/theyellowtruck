@@ -121,7 +121,11 @@
           nextEl: '.swiper-button-next',
           prevEl: '.swiper-button-prev',
       },
+      initialSlide: 1,
   });  
+  
+
+
   
   });
 })(jQuery);
@@ -148,4 +152,41 @@ function filterJobs() {
     }
   });
 }
+
+function filterCompanies() {
+  var companySize = document.getElementById('company-size').value;
+  var companyName = document.getElementById('company-name').value;
+
+  // Show loading message
+  document.querySelector('.companys-list').innerHTML = '<p>Loading...</p>';
+
+  // Send filters to the server using AJAX
+  jQuery.ajax({
+      type: 'GET',
+      url: ajax_object.ajaxurl,
+      data: {
+          action: 'filter_companies',
+          company_size: encodeURIComponent(companySize),
+          company_name: encodeURIComponent(companyName)
+      },
+      success: function (response) {
+          // Update the companies list with the filtered results
+          document.querySelector('.companys-list').innerHTML = response;
+      },
+      error: function () {
+          // Handle error, if any
+          document.querySelector('.companys-list').innerHTML = '<p>Error loading companies.</p>';
+      }
+  });
+}
+
+// Add a function to reset the filters and show all companies
+function resetFilters() {
+  document.getElementById('company-size').value = '';
+  document.getElementById('company-name').value = '';
+  filterCompanies(); // Trigger the filtering function after resetting
+}
+
+
+
 

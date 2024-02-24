@@ -20,22 +20,24 @@ function mfn_load_child_theme_textdomain(){
 
 function mfnch_enqueue_styles()
 {
+    if (is_rtl()) {
+        wp_enqueue_style('mfn-rtl', get_template_directory_uri() . '/rtl.css');
+    }
 
-	if ( is_rtl() ) {
-		wp_enqueue_style('mfn-rtl', get_template_directory_uri() . '/rtl.css');
-	}
+    wp_dequeue_style('style');
+    wp_enqueue_style('style', get_stylesheet_directory_uri() . '/style.css');
 
-	wp_dequeue_style('style');
-	wp_enqueue_style('style', get_stylesheet_directory_uri() .'/style.css');
     $job_listing_params = array(
         'defaultTabIndex' => 0,
         'jobIdParam' => isset($_GET['job_id']) ? intval($_GET['job_id']) : 0,
     );
 
- 	wp_enqueue_script('main-js', get_stylesheet_directory_uri() . '/main.js', array('jquery'), null, true);
-     wp_localize_script('main-js', 'jobListingParams', $job_listing_params);
+    wp_enqueue_script('main-js', get_stylesheet_directory_uri() . '/main.js', array('jquery'), null, true);
+    wp_localize_script('main-js', 'ajax_object', array('ajaxurl' => admin_url('admin-ajax.php')));
+    wp_localize_script('main-js', 'jobListingParams', $job_listing_params);
 }
 add_action('wp_enqueue_scripts', 'mfnch_enqueue_styles', 101);
+
 
 function enqueue_slick_scripts() {
     wp_enqueue_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js', array(), null, true);
@@ -50,6 +52,7 @@ function enqueue_slick_scripts() {
 add_action('wp_enqueue_scripts', 'enqueue_slick_scripts');
 
 add_shortcode('all_jobs', '_all_jobs_');
+
 function _all_jobs_() {
 
     ob_start(); ?>
@@ -885,6 +888,19 @@ function jobs_listing_home() {
         $compensation = get_field('compensation', $job_post->ID);
         $job_type = get_field('job_type', $job_post->ID);
 
+      
+        if ($company_representatives) :
+            foreach ($company_representatives as $post) :
+                setup_postdata($post);
+                
+                $thumbnail_url = get_the_post_thumbnail_url($post->ID, 'thumbnail');
+                if ($thumbnail_url) {
+                    echo '<img src="' . esc_url($thumbnail_url) . '" alt="' . esc_attr(get_the_title($post->ID)) . '">';
+                }
+            endforeach;
+            wp_reset_postdata();
+        endif;
+
         echo '<p>Category: ' . esc_html($job_category) . '</p>';
         echo '<p>Location: ' . esc_html($job_location) . '</p>';
         echo '<input type="hidden" value="'.get_the_title($job_post->ID).'" id="Job-title">';
@@ -931,18 +947,18 @@ function swiper_slider_shortcode() {
                     'url' => '/membership-account/membership-levels/',
                 ),
                 array(
-                    'image'       => '/wp-content/uploads/2024/02/explore-jobs.png',
-                    'heading'     => 'Explore Jobs',
-                    'description' => 'Browse job listings from dozens of carriers that are actively hiring.',
-                    'button_text' => 'Browse Jobs',
-                    'url' => '/job-openings/',
-                ),
-                array(
                     'image'       => '/wp-content/uploads/2024/02/rate-a-carrier.png',
                     'heading'     => 'Rate Trucking Carriers',
                     'description' => 'Browse companies and leave your review for other truckers to see. All ratings are tracked for The Golden Truck Award.',
                     'button_text' => 'Rate a Carrier',
                     'url' => '/company-profiles/',
+                ),
+                array(
+                    'image'       => '/wp-content/uploads/2024/02/explore-jobs.png',
+                    'heading'     => 'Explore Jobs',
+                    'description' => 'Browse job listings from dozens of carriers that are actively hiring.',
+                    'button_text' => 'Browse Jobs',
+                    'url' => '/job-openings/',
                 ),
                 array(
                     'image'       => '/wp-content/uploads/2024/02/golden-truck-award.png',
@@ -972,3 +988,115 @@ function swiper_slider_shortcode() {
 }
 
 add_shortcode('swiper_slider', 'swiper_slider_shortcode');
+
+
+
+add_action('wp_ajax_filter_companies', 'filter_companies');
+add_action('wp_ajax_nopriv_filter_companies', 'filter_companies');
+
+
+function filter_companies() {
+    ob_start();
+
+    $company_size = isset($_GET['company_size']) ? sanitize_text_field($_GET['company_size']) : '';
+    $company_name = isset($_GET['company_name']) ? sanitize_text_field($_GET['company_name']) : '';
+
+
+    $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
+    $company_args = array(
+        'post_type'      => 'company-profile',
+        'posts_per_page' => 9,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+        'paged'          => $paged,
+    );
+    
+        if ($company_name) {
+            $company_args['s'] = $company_name;
+        }
+            // Add filtering conditions
+    if ($company_size) {
+        $company_args['meta_query'][] = array(
+            'key'     => 'company_employees',
+            'value'   => $company_size,
+            'compare' => 'LIKE',
+        );
+    }
+    
+        $company_query = new WP_Query($company_args);
+        $company_posts = $company_query->posts;
+
+    echo '<div class="companys-filter">';
+    echo '<div class="company-size-filter">';
+    echo '<label for="company-size">Filter by Company Size:</label>';
+    echo '<select id="company-size">';
+    echo '<option value="">Select Company Size</option>';
+    echo '<option value="small">Small (1-50 employees)</option>';
+    echo '<option value="medium">Medium (51-200 employees)</option>';
+    echo '<option value="large">Large (201+ employees)</option>';
+    echo '</select>';
+    echo '</div>';
+    echo '<div class="company-name-filter">';
+    echo '<label for="company-name">Filter by Company Name:</label>';
+    echo '<input type="text" id="company-name">';
+    echo '</div>';
+    echo '<div>';
+    echo '<button onclick="filterCompanies()">Filter Company</button>';
+    echo '<p onclick="resetFilters()" style="color: #FF0000; margin: 0; cursor: pointer">Reset and Show All</p>';                                                                                                                                                                                                                                        
+    echo '</div>';
+    echo '</div>';
+    echo '<div class="company-wrapper">';
+    echo '<div class="companys-list">';
+
+    if ($company_query->have_posts()) {
+        foreach ($company_posts as $index => $company_post) {
+            $company_name = get_field('company_name', $company_post->ID);
+            $company_location = get_field('company_location', $company_post->ID);
+            $company_website = get_field('company_website', $company_post->ID);
+            $company_employees = get_field('company_employees', $company_post->ID);
+            $company_description = wp_strip_all_tags(get_field('company_description', $company_post->ID)); // Strip HTML tags
+            $company_description = wp_trim_words($company_description, 20); // Limit to 100 words
+            $thumbnail_url = get_the_post_thumbnail_url($company_post->ID, 'thumbnail');
+    
+            echo '<div class="company-list-card">';
+            if ($thumbnail_url) {
+                echo '<img src="' . esc_url($thumbnail_url) . '" alt="' . esc_html($thumbnail_url) . '">';
+            }
+            echo '<h4> ' . esc_html($company_name) . '</h4>';
+            echo '<p>' . esc_html($company_location) . '</p>';
+            echo '<p>Company Size: ' . ($company_employees ? esc_html($company_employees) : 'N/A') . '</p>';
+            echo '<a class="website-link" target="_blank" href="'. esc_html($company_website) . '">Website';
+            echo '</a>';
+            echo '<p>' . esc_html($company_description) . '</p>';
+            echo '<a href="'. esc_html($company_website) . '" class="job-list-view">Read More';
+            echo '</a>';
+            echo '</div>';
+        }
+    } else {
+  echo '<p>No company found.</p>';
+}
+    echo '</div>';
+
+    // Pagination
+    $total_pages = $company_query->max_num_pages;
+    if ($total_pages > 1) {
+        echo '<div class="pagination">';
+        echo paginate_links(array(
+            'base'      => get_pagenum_link(1) . '%_%',
+            'format'    => '/page/%#%',
+            'current'   => max(1, get_query_var('paged')),
+            'total'     => $total_pages,
+        ));
+        echo '</div>';
+    }
+
+    // Reset the main query
+    wp_reset_query();
+
+
+    return ob_get_clean();
+    wp_die();
+}
+
+add_shortcode('all-companies', 'filter_companies');

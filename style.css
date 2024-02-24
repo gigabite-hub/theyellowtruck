@@ -107,3 +107,112 @@ width: 750px;
 .home-swiper-container .swiper-button-next  {
 right: 27%;
 }
+.job-list-card img{
+    display: block;
+    max-width: 100px;
+    height: 65px;
+    width: 100%;
+    margin: 10px 0;
+    object-fit: contain;
+}
+textarea:focus, input:focus{
+    border-color: #fcd411 !important;
+}
+body{
+    color: #000 !important;
+}
+.pmpro_checkout-field{
+    width: 50%;
+}
+.pmpro_checkout-field .input, .pmpro_checkout-field select{
+    width: 100%;
+        max-width: 90% !important;
+    }
+.pmpro_checkout-fields{
+    display: flex;
+    flex-wrap: wrap;
+}
+.pmpro_checkout_gateway-none h2{
+    font-size: 30px;
+}
+button.wp-block-button__link{
+    background-color: #303133;
+    border-color: #303133;
+    color: #fcd411;
+}
+button.wp-block-button__link:hover {
+    background-color: #303133;
+    border-color: #fcd411;
+    color: #fff;
+}
+body a:hover{
+    color: #fcd411;
+}
+input[type="date"], input[type="email"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"], select, textarea, .woocommerce .quantity input.qty{
+    border-width: 1px !important;
+}
+.companys-list{
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 20px;
+}
+.company-list-card{
+    width: 32%;
+    padding: 20px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border: 2px solid #FCD411;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+.jobs-filter, .companys-filter{
+    display: flex;
+    align-items: end;
+    column-gap: 30px;
+    background-color: #d7d7d7;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+.jobs-filter button, .companys-filter button{
+    background-color: #303133;
+        border-color: #303133;
+    margin: 0;
+}
+.jobs-filter select, .companys-filter select, .companys-filter input{
+    margin: 0;
+}
+.jobs-filter button:hover, .companys-filter button:hover{
+    color: #303133;
+        border-color: #303133;
+}
+.jobs-filter label, .jobs-filter option, .companys-filter label, .companys-filter option  {
+       color: #303133;
+}
+.company-list-card img{
+    max-width: 200px;
+height: 100px;
+object-fit: contain;
+}
+.company-list-card h4{
+font-size: 24px;
+margin-bottom: 5px;
+min-height: 60px;
+}
+
+.company-list-card p{
+margin: 0;
+overflow: hidden;
+text-overflow: ellipsis;
+display: -webkit-box;
+-webkit-line-clamp: 3;
+-webkit-box-orient: vertical;
+}
+.company-list-card  .website-link{
+    color: #FCD411;
+    margin-bottom: 5px;
+}
+.pagination{
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    column-gap: 5px;
+}
