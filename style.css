@@ -33,10 +33,6 @@ Text Domain: tyt
     display: block;
 }
 
-
-.home-swiper-container {
-width: 750px;
-}
 .home-swiper-container {
     margin: 0 auto;
     position: relative;
@@ -514,6 +510,16 @@ margin-left: 0;
     margin-bottom: 20px;
 }
 
+@media  (max-width: 1240px) {  
+   html body  #Side_slide {
+        background-color: #303133;
+        border-color: #303133;
+    }
+   html body #Side_slide #menu ul li.current-menu-item > a, html body #Side_slide #menu ul li.current_page_item > a,
+   html body #Side_slide #menu ul li.hover > .menu-toggle, html body #Side_slide a.active, #Side_slide a:not(.action_button):hover{
+     color: #FCD411;
+    } 
+}
 @media  (max-width: 767px) {
     .tabs {
         margin-bottom: 30px;
@@ -524,4 +530,22 @@ margin-left: 0;
     .job-wrapper-home .jobs-list{
         flex-wrap: wrap;
     }    
+    .home-swiper-container .swiper-button-prev  {
+        left: 8%;
+      }
+      .home-swiper-container .swiper-button-next  {
+      right: 8%;
+      }
+    .home  #Content {
+        padding-top: 0px;
+    }
+    .c-reviews .card {
+        padding: 25px;
+        min-height: auto;
+    }
+}
+@media  (min-width: 768px) {
+    .home-swiper-container {
+        width: 750px;
+        } 
 }
