@@ -98,10 +98,12 @@ Text Domain: tyt
     font-size: 22px;
 }
 .home-swiper-container .swiper-button-prev  {
-  left: 27%;
+    top: 0;
+    right: 55px;
+    left: auto;
 }
 .home-swiper-container .swiper-button-next  {
-right: 27%;
+top: 0;
 }
 .job-list-card img{
     display: block;
@@ -509,7 +511,13 @@ margin-left: 0;
     object-fit: contain;
     margin-bottom: 20px;
 }
-
+#Footer .mcb-column-inner{
+    margin: 0;
+}
+#Footer  .two-fifth.column {
+    width: 40%;
+    padding: 20px;
+}
 @media  (max-width: 1240px) {  
    html body  #Side_slide {
         background-color: #303133;
@@ -524,17 +532,17 @@ margin-left: 0;
     .tabs {
         margin-bottom: 30px;
     }
-    .company-list-card {
+    .company-list-card, .tabs {
         width: 100%;
     }
     .job-wrapper-home .jobs-list{
         flex-wrap: wrap;
     }    
     .home-swiper-container .swiper-button-prev  {
-        left: 8%;
+        /* left: 8%; */
       }
       .home-swiper-container .swiper-button-next  {
-      right: 8%;
+      /* right: 8%; */
       }
     .home  #Content {
         padding-top: 0px;
@@ -542,6 +550,19 @@ margin-left: 0;
     .c-reviews .card {
         padding: 25px;
         min-height: auto;
+    }
+    .c_row div{
+        width: 100%;
+        padding: 0;
+    }
+   html body #Footer .widgets_wrapper {
+        padding: 25px 0;
+    }
+    #Footer .widgets_wrapper .widget {
+        margin: 0px 0;
+    }
+    #Footer  .wp-block-group__inner-container{
+        text-align: left;
     }
 }
 @media  (min-width: 768px) {
