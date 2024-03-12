@@ -518,6 +518,9 @@ margin-left: 0;
     width: 40%;
     padding: 20px;
 }
+.responsive-menu-toggle .icon-menu-fine:before {
+    color: #FED50E;
+}
 @media  (max-width: 1240px) {  
    html body  #Side_slide {
         background-color: #303133;
@@ -564,9 +567,19 @@ margin-left: 0;
     #Footer  .wp-block-group__inner-container{
         text-align: left;
     }
+    .home-swiper-container .swiper-slide {
+        width: auto !important;
+    }
+    #Footer .two-fifth.column{
+        width: 100%;
+    }
 }
 @media  (min-width: 768px) {
     .home-swiper-container {
-        width: 750px;
+        /* width: 750px; */
         } 
+        .c-reviews .card{
+                max-width: 760px;
+                width: 100% !important;
+            }
 }

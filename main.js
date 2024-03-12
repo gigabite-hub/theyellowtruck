@@ -107,7 +107,7 @@
       effect: 'coverflow',
       grabCursor: true,
       centeredSlides: false,
-      slidesPerView: 'auto',
+      slidesPerView: 3,
       coverflowEffect: {
           rotate: 0,
           stretch: 80,
@@ -120,41 +120,18 @@
           prevEl: '.swiper-button-prev',
       },
       initialSlide: 2,
-      // breakpoints: {
-      //     // when window width is <= 480px
-      //     480: {
-      //         slidesPerView: 1,
-      //         coverflowEffect: {
-      //             rotate: 0,
-      //             stretch: 50,
-      //             depth: 100,
-      //             modifier: 1,
-      //             slideShadows: false,
-      //         },
-      //     },
-      //     // when window width is <= 768px
-      //     768: {
-      //         slidesPerView: 2,
-      //         coverflowEffect: {
-      //             rotate: 0,
-      //             stretch: 50,
-      //             depth: 100,
-      //             modifier: 1,
-      //             slideShadows: false,
-      //         },
-      //     },
-      //     // when window width is <= 1300px
-      //     1300: {
-      //         slidesPerView: 3,
-      //         coverflowEffect: {
-      //             rotate: 0,
-      //             stretch: 80,
-      //             depth: 200,
-      //             modifier: 1,
-      //             slideShadows: false,
-      //         },
-      //     },
-      // },
+      breakpoints: {
+          768: {
+              slidesPerView: 2,
+              coverflowEffect: {
+                  rotate: 0,
+                  stretch: 50,
+                  depth: 100,
+                  modifier: 1,
+                  slideShadows: false,
+              },
+          },
+      },
   });
   
   
