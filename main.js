@@ -1,3 +1,5 @@
+"use strict";
+
 (function ($) {
   $(document).ready(function () {
     console.log("hello");
@@ -98,26 +100,56 @@
         jobWrapper.parent().removeClass("fixed");
       }
     });
+
+    // Filter
+
+    $('.filter-company').on('click', function (event) {
+      event.preventDefault();
+
+      var companySize = $('#company-size').val();
+      var companyLocation = $('#company-location').val();
+
+      console.log('Company Size:', companySize);
+      console.log('Company Location:', companyLocation);
+
+      $.ajax({
+        url: THEYELLOWTRUCK.AJAX_URL,
+        type: 'POST',
+        data: {
+            'action': 'company_filter',
+            'companySize': companySize,
+            'companyLocation': companyLocation,
+            'nonce': THEYELLOWTRUCK.NONCE,
+        }
+      })
+        .done(function (res) {
+          console.log("🚀 ~ res:", res);
+          $('.companys-list').html(res);
+        });
+    });
+    // End of Filter
+
+
     var mySwiper = new Swiper('.home-swiper-container', {
       loop: true,
       speed: 1000,
       autoplay: {
         delay: 5000,
-    },
+      },
       effect: 'coverflow',
       grabCursor: true,
       centeredSlides: false,
       slidesPerView: 3,
       coverflowEffect: {
-          rotate: 0,
-          stretch: 80,
-          depth: 200,
-          modifier: 1,
-          slideShadows: false,
+        rotate: 0,
+        stretch: 80,
+        depth: 200,
+        modifier: 1,
+        slideShadows: false,
       },
       navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
       },
       initialSlide: 2,
       breakpoints: {
@@ -137,7 +169,6 @@
   
 
 
-  
   });
 })(jQuery);
 
@@ -164,41 +195,6 @@ function filterJobs() {
   });
 }
 
-function filterCompanies() {
-  var companySize = document.getElementById('company-size').value;
-  var companyName = document.getElementById('company-name').value;
-  var companyLocation = document.getElementById('company-location').value;
-
-  // Show loading message
-  document.querySelector('.companys-list').innerHTML = '<p>Loading...</p>';
-
-  // Send filters to the server using AJAX
-  jQuery.ajax({
-      type: 'GET',
-      url: ajax_object.ajaxurl,
-      data: {
-          action: 'filter_companies',
-          company_employees: encodeURIComponent(companySize),
-          company_name: encodeURIComponent(companyName),
-          company_location: encodeURIComponent(companyLocation)
-      },
-      success: function (response) {
-          // Update the companies list with the filtered results
-          document.querySelector('.companys-list').innerHTML = response;
-      },
-      error: function () {
-          document.querySelector('.companys-list').innerHTML = '<p>Error loading companies.</p>';
-      }
-  });
-}
-
-
-// Add a function to reset the filters and show all companies
-function resetFilters() {
-  document.getElementById('company-size').value = '';
-  document.getElementById('company-name').value = '';
-  filterCompanies(); // Trigger the filtering function after resetting
-}
 
 
 

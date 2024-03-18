@@ -32,8 +32,14 @@ function mfnch_enqueue_styles()
         'jobIdParam' => isset($_GET['job_id']) ? intval($_GET['job_id']) : 0,
     );
 
-    wp_enqueue_script('main-js', get_stylesheet_directory_uri() . '/main.js', array('jquery'), null, true);
-    wp_localize_script('main-js', 'ajax_object', array('ajaxurl' => admin_url('admin-ajax.php')));
+    wp_enqueue_script('main-js', get_stylesheet_directory_uri() . '/main.js', array('jquery'), '1.0.0', true);
+
+    wp_localize_script( 'main-js', 'THEYELLOWTRUCK', array(
+        'AJAX_URL'	=> admin_url( 'admin-ajax.php' ),
+        'NONCE'		=> wp_create_nonce( 'theyellowtruck-nonce' ),
+    ) );    
+
+    // wp_localize_script('main-js', 'ajax_object', array('ajaxurl' => admin_url('admin-ajax.php')));
     wp_localize_script('main-js', 'jobListingParams', $job_listing_params);
 }
 add_action('wp_enqueue_scripts', 'mfnch_enqueue_styles', 101);
@@ -925,16 +931,9 @@ function swiper_slider_shortcode() {
 add_shortcode('swiper_slider', 'swiper_slider_shortcode');
 
 
-
-add_action('wp_ajax_filter_companies', 'filter_companies');
-add_action('wp_ajax_nopriv_filter_companies', 'filter_companies');
-
-
 function filter_companies() {
     ob_start();
    
-    $company_employees = isset($_GET['company_employees']) ? sanitize_text_field($_GET['company_employees']) : '';
-    $company_name = isset($_GET['company_name']) ? sanitize_text_field($_GET['company_name']) : '';
     $company_locations = array();
     $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 
@@ -967,37 +966,36 @@ function filter_companies() {
         if (!in_array($company_location, $company_locations)) {
             $company_locations[] = $company_location;
         }
-    }
+    } ?>
 
-    echo '<div class="companys-filter">';
-    echo '<div class="company-size-filter">';
-    echo '<label for="company-size">Filter by Company Size:</label>';
-    echo '<select id="company-size">';
-    echo '<option value="">Select Company Size</option>';
-    echo '<option value="small">Small (1-50 employees)</option>';
-    echo '<option value="medium">Medium (51-200 employees)</option>';
-    echo '<option value="large">Large (201+ employees)</option>';
-    echo '</select>';
-    echo '</div>';
-    echo '<div class="location-filter">';
-    echo '<label for="location">Filter by State:</label>';
-    echo '<select id="company-location">';
-        echo '<option value="">All States</option>';
-        foreach ($company_locations as $state) {
-            echo '<option value="' . esc_attr($state) . '">' . esc_html($state) . '</option>';
-        }
-    echo '</select>';
-    echo '</div>';  
+    <div class="companys-filter">
+        <!-- <div class="company-size-filter">
+            <label for="company-size">Filter by Company Size:</label>
+            <select name="" id="company-size">
+                <option value="">Select Company Size</option>
+                <option value="small">Small (1-50 employees)</option>
+                <option value="medium">Medium (51-200 employees)</option>
+                <option value="large">Large (201+ employees)</option>
+            </select>
+        </div> -->
 
-    echo '<div class="company-name-filter">';
-    echo '<label for="company-name">Filter by Company Name:</label>';
-    echo '<input type="text" id="company-name">';
-    echo '</div>';
-    echo '<div>';
-    echo '<button onclick="filterCompanies()">Filter Company</button>';
-    echo '<p onclick="resetFilters()" style="color: #FF0000; margin: 0; cursor: pointer">Reset and Show All</p>';                                                                                                                                                                                                                                        
-    echo '</div>';
-    echo '</div>';
+        <div class="location-filter">
+            <label for="location">Filter by State:</label>
+            <select id="company-location">
+                <option value="">All States</option><?php
+                foreach ($company_locations as $state) {
+                    echo '<option value="' . esc_attr($state) . '">' . esc_html($state) . '</option>';
+                }?>
+            </select>
+        </div>
+        <div>
+            <button class="filter-company">Filter Company</button>
+        </div>
+
+    </div>
+    
+
+    <?php
     echo '<div class="company-wrapper">';
     echo '<div class="companys-list">';
 
@@ -1010,6 +1008,15 @@ function filter_companies() {
             $company_description = wp_strip_all_tags(get_field('company_description', $company_post->ID)); // Strip HTML tags
             $company_description = wp_trim_words($company_description, 20); // Limit to 100 words
             $thumbnail_url = get_the_post_thumbnail_url($company_post->ID, 'thumbnail');
+
+            $company_size = 'N/A'; 
+            if ($company_employees >= 1 && $company_employees <= 50) {
+                $company_size = 'Small';
+            } elseif ($company_employees >= 51 && $company_employees <= 200) {
+                $company_size = 'Medium';
+            } elseif ($company_employees >= 201) {
+                $company_size = 'Large';
+            }
     
             echo '<div class="company-list-card">';
             if ($thumbnail_url) {
@@ -1017,7 +1024,7 @@ function filter_companies() {
             }
             echo '<h4> ' . esc_html($company_name) . '</h4>';
             echo '<p>' . esc_html($company_location) . '</p>';
-            echo '<p>Company Size: ' . ($company_employees ? esc_html($company_employees) : 'N/A') . '</p>';
+            echo '<p data-company-size='.$company_size.'>Company Size: ' . ($company_employees ? esc_html($company_employees) : 'N/A') . '</p>';
             echo '<a class="website-link" target="_blank" href="'. esc_html($company_website) . '">Website';
             echo '</a>';
             echo '<p>' . esc_html($company_description) . '</p>';
@@ -1026,8 +1033,8 @@ function filter_companies() {
             echo '</div>';
         }
     } else {
-  echo '<p>No company found.</p>';
-}
+        echo '<p>No company found.</p>';
+    }
     echo '</div>';
 
     // Pagination
@@ -1048,7 +1055,84 @@ function filter_companies() {
 
 
     return ob_get_clean();
-    wp_die();
+    ob_end_clean();
 }
 
 add_shortcode('all-companies', 'filter_companies');
+
+
+function company_filter() {
+    check_ajax_referer('theyellowtruck-nonce', 'nonce');
+
+    $get_companySize = isset($_POST['companySize']) ? sanitize_text_field(wp_unslash($_POST['companySize'])) : '';
+    $get_companyLocation = isset($_POST['companyLocation']) ? sanitize_text_field(wp_unslash($_POST['companyLocation'])) : '';
+    
+    $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
+    $company_args = array(
+        'post_type'      => 'company-profile',
+        'posts_per_page' => 9,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+        'paged'          => $paged,
+    );
+
+    if ($get_companySize) {
+        // Modify the query based on the selected company size
+        $company_args['meta_query'][] = array(
+            'key'     => 'company_employees',
+            'value'   => $get_companySize,
+            'compare' => 'LIKE',
+        );
+    }
+
+    if ($get_companyLocation) {
+        // Modify the query based on the selected company location
+        $company_args['meta_query'][] = array(
+            'key'     => 'company_location',
+            'value'   => $get_companyLocation,
+            'compare' => 'LIKE',
+        );
+    }
+
+    $company_query = new WP_Query($company_args);
+    $company_posts = $company_query->posts;
+
+    echo '<div class="company-wrapper">';
+    echo '<div class="companys-list">';
+
+    if ($company_query->have_posts()) {
+        foreach ($company_posts as $index => $company_post) {
+            $company_name = get_field('company_name', $company_post->ID);
+            $company_location = get_field('company_location', $company_post->ID);
+            $company_website = get_field('company_website', $company_post->ID);
+            $company_employees = get_field('company_employees', $company_post->ID);
+
+            $company_description = wp_strip_all_tags(get_field('company_description', $company_post->ID)); // Strip HTML tags
+            $company_description = wp_trim_words($company_description, 20); // Limit to 100 words
+            $thumbnail_url = get_the_post_thumbnail_url($company_post->ID, 'thumbnail');
+    
+            echo '<div class="company-list-card" >';
+            if ($thumbnail_url) {
+                echo '<img src="' . esc_url($thumbnail_url) . '" alt="' . esc_html($thumbnail_url) . '">';
+            }
+            echo '<h4> ' . esc_html($company_name) . '</h4>';
+            echo '<p>' . esc_html($company_location) . '</p>';
+            echo '<p>Company Size: ' . ($company_employees ? esc_html($company_employees) : 'N/A') . '</p>';
+            echo '<a class="website-link" target="_blank" href="'. esc_html($company_website) . '">Website';
+            echo '</a>';
+            echo '<p>' . esc_html($company_description) . '</p>';
+            echo '<a href="'. esc_html($company_website) . '" class="job-list-view">Read More';
+            echo '</a>';
+            echo '</div>';
+        }
+    } else {
+        echo '<p>No company found.</p>';
+    }
+    echo '</div>';
+
+    wp_die();
+}
+
+add_action('wp_ajax_company_filter', 'company_filter');
+add_action('wp_ajax_nopriv_company_filter', 'company_filter');
